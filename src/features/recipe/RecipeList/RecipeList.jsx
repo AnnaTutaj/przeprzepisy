@@ -4,13 +4,18 @@ import { Grid } from "semantic-ui-react";
 
 class RecipeList extends Component {
   render() {
+    const { recipes, selectRecipe } = this.props;
     return (
       <>
         <h2>W tym tygodniu polecamy</h2>
         <Grid>
-          {this.props.recipes.map((recipe) => (
+          {recipes.map((recipe) => (
             <Grid.Column key={recipe.id} width={4}>
-              <RecipeListItem key={recipe.id} recipe={recipe} />
+              <RecipeListItem
+                key={recipe.id}
+                recipe={recipe}
+                selectRecipe={selectRecipe}
+              />
             </Grid.Column>
           ))}
         </Grid>

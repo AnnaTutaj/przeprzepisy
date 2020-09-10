@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Segment, Form, Button } from "semantic-ui-react";
+import { Segment, Form, Button, Header, Icon } from "semantic-ui-react";
 
 class RecipeForm extends Component {
   state = {
@@ -9,9 +9,21 @@ class RecipeForm extends Component {
     createdBy: "",
   };
 
+  componentDidMount() {
+    if (this.props.selectedRecipe !== null) {
+      this.setState({
+        ...this.props.selectedRecipe,
+      });
+    }
+  }
+
   handleOnSubmit = (e) => {
     e.preventDefault();
-    this.props.createRecipe(this.state);
+    if (this.state.id) {
+      this.props.updateRecipe(this.state);
+    } else {
+      this.props.createRecipe(this.state);
+    }
   };
 
   // TODO - do usunięcia - referencja do testów bez destrukturyzacji
@@ -34,6 +46,11 @@ class RecipeForm extends Component {
     return (
       <Segment style={{ width: "50%" }}>
         <Form onSubmit={this.handleOnSubmit} autoComplete='off'>
+          <Header as='h3' dividing>
+            <Header.Content>
+              {this.state.id ? "Edytuj przepis" : "Dodaj przepis"}
+            </Header.Content>
+          </Header>
           <Form.Field>
             <label>Nazwa przepisu</label>
             <input
@@ -70,12 +87,22 @@ class RecipeForm extends Component {
               onChange={this.handleInputChange}
             ></input>
           </Form.Field>
-          <Button primary type='submit'>
-            Dodaj
+          <Button primary type='submit' floated='right'>
+            Zapisz
           </Button>
           <Button type='button' onClick={closeForm}>
             Anuluj
           </Button>
+          {this.state.id && (
+            <Button
+              negative
+              type='button'
+              onClick={() => this.props.deleteRecipe(this.state.id)}
+            >
+              Usuń
+            </Button>
+          )}
+        
         </Form>
       </Segment>
     );

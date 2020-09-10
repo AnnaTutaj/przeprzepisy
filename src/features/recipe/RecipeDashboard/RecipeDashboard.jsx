@@ -86,12 +86,20 @@ class RecipeDashboard extends Component {
   state = {
     recipes: recipes,
     isOpen: false,
+    selectedRecipe: null,
   };
 
-  handleIsOpenToggle = () => {
-    this.setState(({ isOpen }) => ({
-      isOpen: !isOpen,
-    }));
+  handleFormOpen = () => {
+    this.setState({
+      selectedRecipe: null,
+      isOpen: true,
+    });
+  };
+
+  handleFormClose = () => {
+    this.setState({
+      isOpen: false,
+    });
   };
 
   handleCreateRecipe = (newRecipe) => {
@@ -103,8 +111,37 @@ class RecipeDashboard extends Component {
     }));
   };
 
+  handleUpdateRecipe = (updatedRecipe) => {
+    this.setState(({ recipes }) => ({
+      recipes: recipes.map((recipe) => {
+        if (recipe.id === updatedRecipe.id) {
+          return { ...updatedRecipe };
+        } else {
+          return recipe;
+        }
+      }),
+      isOpen: false,
+      selectedRecipe: null,
+    }));
+  };
+
+  handleDeleteRecipe = (id) => {
+    this.setState(({ recipes }) => ({
+      recipes: recipes.filter((r) => r.id !== id),
+      isOpen: false,
+      selectedRecipe: null,
+    }));
+  };
+
+  handleSelectRecipe = (e) => {
+    this.setState({
+      selectedRecipe: e,
+      isOpen: true,
+    });
+  };
+
   render() {
-    const { recipes, isOpen } = this.state;
+    const { recipes, isOpen, selectedRecipe } = this.state;
 
     return (
       <>
@@ -114,19 +151,26 @@ class RecipeDashboard extends Component {
               <Button
                 primary
                 content='Dodaj przepis'
-                onClick={this.handleIsOpenToggle}
+                onClick={this.handleFormOpen}
               />
               {/* Tymczasowe do testów, żeby nie komplikować z parent-child */}
               {isOpen && (
                 <RecipeForm
+                  key={selectedRecipe ? selectedRecipe.id : 0}
+                  updateRecipe={this.handleUpdateRecipe}
+                  selectedRecipe={selectedRecipe}
                   createRecipe={this.handleCreateRecipe}
-                  closeForm={this.handleIsOpenToggle}
+                  deleteRecipe={this.handleDeleteRecipe}
+                  closeForm={this.handleFormClose}
                 />
               )}
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <RecipeList recipes={recipes} />
+            <RecipeList
+              recipes={recipes}
+              selectRecipe={this.handleSelectRecipe}
+            />
           </Grid.Row>
           <Grid.Row>
             <Grid.Column>
