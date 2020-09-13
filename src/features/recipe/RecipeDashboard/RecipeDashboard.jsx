@@ -1,90 +1,24 @@
 import React, { Component } from "react";
 import { Grid, Button, Segment } from "semantic-ui-react";
-import RecipeList from "../RecipeList/RecipeList";
-import RecipeForm from "../RecipeForm/RecipeForm";
+import { connect } from "react-redux";
 import cuid from "cuid";
 
-const recipes = [
-  {
-    id: "1",
-    title: "Przepyszne Babeczki",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt.",
-    createdBy: "Jan Kowalski",
-    pictureURL: "https://source.unsplash.com/collection/190727/300x200",
-    likedBy: [
-      {
-        id: "1",
-        name: "Anna",
-        pictureURL: "https://randomuser.me/api/portraits/women/40.jpg",
-      },
-      {
-        id: "2",
-        name: "Jolie",
-        pictureURL: "https://randomuser.me/api/portraits/women/42.jpg",
-      },
-    ],
-  },
-  {
-    id: "2",
-    title: "Sałatka owocowa",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt.",
-    createdBy: "Jan Nowak",
-    pictureURL: "https://source.unsplash.com/collection/190727/300x200",
-    likedBy: [
-      {
-        id: "a",
-        name: "Anna",
-        pictureURL: "https://randomuser.me/api/portraits/women/40.jpg",
-      },
-    ],
-  },
-  {
-    id: "3",
-    title: "Grillowany łosoś",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt.",
-    createdBy: "Julia Kowalska",
-    pictureURL: "https://source.unsplash.com/collection/190727/300x200",
-    likedBy: [
-      {
-        id: "1",
-        name: "Anna",
-        pictureURL: "https://randomuser.me/api/portraits/women/40.jpg",
-      },
-      {
-        id: "2",
-        name: "Jolie",
-        pictureURL: "https://randomuser.me/api/portraits/women/42.jpg",
-      },
-    ],
-  },
-  {
-    id: "4",
-    title: "Tonkotsu ramen",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt.",
-    createdBy: "Katarzyna Nowak",
-    pictureURL: "https://source.unsplash.com/collection/190727/300x200",
-    likedBy: [
-      {
-        id: "1",
-        name: "Anna",
-        pictureURL: "https://randomuser.me/api/portraits/women/40.jpg",
-      },
-      {
-        id: "2",
-        name: "Jolie",
-        pictureURL: "https://randomuser.me/api/portraits/women/42.jpg",
-      },
-    ],
-  },
-];
+import { createRecipe, updateRecipe, deleteRecipe } from "../recipeActions";
+import RecipeList from "../RecipeList/RecipeList";
+import RecipeForm from "../RecipeForm/RecipeForm";
+
+const mapStateToProps = (state) => ({
+  recipes: state.recipes,
+});
+
+const mapDispatchToProps = {
+  createRecipe, 
+  updateRecipe,
+  deleteRecipe
+}
 
 class RecipeDashboard extends Component {
   state = {
-    recipes: recipes,
     isOpen: false,
     selectedRecipe: null,
   };
@@ -105,29 +39,25 @@ class RecipeDashboard extends Component {
   handleCreateRecipe = (newRecipe) => {
     newRecipe.id = cuid();
     newRecipe.pictureURL = "/assets/dummyRecipe.jpg";
+    this.props.createRecipe(newRecipe);
     this.setState(({ recipes }) => ({
-      recipes: [...recipes, newRecipe],
       isOpen: false,
     }));
   };
 
   handleUpdateRecipe = (updatedRecipe) => {
+    this.props.updateRecipe(updatedRecipe);
+
     this.setState(({ recipes }) => ({
-      recipes: recipes.map((recipe) => {
-        if (recipe.id === updatedRecipe.id) {
-          return { ...updatedRecipe };
-        } else {
-          return recipe;
-        }
-      }),
       isOpen: false,
       selectedRecipe: null,
     }));
   };
 
   handleDeleteRecipe = (id) => {
+    this.props.deleteRecipe(id);
+
     this.setState(({ recipes }) => ({
-      recipes: recipes.filter((r) => r.id !== id),
       isOpen: false,
       selectedRecipe: null,
     }));
@@ -141,7 +71,8 @@ class RecipeDashboard extends Component {
   };
 
   render() {
-    const { recipes, isOpen, selectedRecipe } = this.state;
+    const { isOpen, selectedRecipe } = this.state;
+    const { recipes } = this.props;
 
     return (
       <>
@@ -194,4 +125,4 @@ class RecipeDashboard extends Component {
   }
 }
 
-export default RecipeDashboard;
+export default connect(mapStateToProps, mapDispatchToProps)(RecipeDashboard);
