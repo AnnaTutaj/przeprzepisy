@@ -3,13 +3,19 @@ import ReactDOM from 'react-dom';
 import './app/layout/style.scss';
 import App from './app/layout/App';
 import * as serviceWorker from './serviceWorker';
+import { BrowserRouter } from 'react-router-dom';
+import 'semantic-ui-less/semantic.less'
 
 const rootElement = document.getElementById('root');
 
 let render = () => {
-  ReactDOM.render(<App />, rootElement)
+  ReactDOM.render(
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  , rootElement)
 }
-
+ 
 if (module.hot) {
   module.hot.accept('./app/layout/App', () => {
     setTimeout(render)

@@ -11,7 +11,7 @@ body {
 /* Navbar styles */
 .ui.fixed.menu {
     height: $navbarHeight;
-    background-color: rgba(1, 1, 1, 0.5);
+    background-color: rgba(1, 1, 1, 0.5) !important;
 
     .container {
         .item {

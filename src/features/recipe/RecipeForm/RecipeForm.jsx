@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Segment, Form, Button, Header, Icon } from "semantic-ui-react";
+import { Segment, Form, Button, Header } from "semantic-ui-react";
 
 class RecipeForm extends Component {
   state = {

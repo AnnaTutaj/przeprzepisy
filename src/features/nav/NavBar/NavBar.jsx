@@ -1,19 +1,49 @@
 import React, { Component } from "react";
 import { Menu, Button, Container } from "semantic-ui-react";
+import { NavLink, Link, withRouter } from "react-router-dom";
+import SignedOutMenu from "./Menus/SignedOutMenu";
+import SignedInMenu from "./Menus/SignedInMenu";
 
 class NavBar extends Component {
+  state = {
+    authenticated: false,
+  };
+
+  handleSignIn = () => this.setState({ authenticated: true });
+  handleSignOut = () => {
+    this.setState({ authenticated: false });
+    this.props.history.push("/");
+  };
+
   render() {
+    const { authenticated } = this.state;
     return (
       <Menu inverted fixed='top'>
         <Container>
-          <Menu.Item header>Przeprzepisy</Menu.Item>
-          <Menu.Item name='przepisy' />
-          {/* TODO docelowo tu będzie przycisk dodawania przepisów */}
-          <Menu.Item>
-            <Button floated='right' content='Dodaj przepis' />
+          <Menu.Item as={NavLink} exact to='/' header>
+            Przeprzepisy
           </Menu.Item>
-          <Menu.Item position='right'>
-            <Button content='Zaloguj się | Zarejestruj się' />
+          <Menu.Item
+            as={NavLink}
+            exact
+            to='/przepisy'
+            name='recipes'
+            content='Przepisy'
+          />
+          <Menu.Item
+            as={NavLink}
+            exact
+            to='/uzytkownicy'
+            name='users'
+            content='Użytkownicy'
+          />
+          {authenticated ? (
+            <SignedInMenu signOut={this.handleSignOut} />
+          ) : (
+            <SignedOutMenu signIn={this.handleSignIn} />
+          )}
+          <Menu.Item as={Link} to='/dodaj-przepis'>
+            <Button floated='right' primary content='Dodaj przepis' />
           </Menu.Item>
         </Container>
       </Menu>
@@ -21,4 +51,4 @@ class NavBar extends Component {
   }
 }
 
-export default NavBar;
+export default withRouter (NavBar);
