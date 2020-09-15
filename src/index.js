@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import {Provider} from 'react-redux';
 import 'semantic-ui-less/semantic.less'
 import { configStore } from './app/store/configStore';
+import ScrollToTop from './app/common/util/ScrollToTop';
 
 const store = configStore();
 
@@ -16,6 +17,7 @@ let render = () => {
   ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
+      <ScrollToTop />
         <App />
       </BrowserRouter>
     </Provider>
