@@ -1,17 +1,18 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { Segment, Image, List } from "semantic-ui-react";
 import RecipeLikes from "./RecipeLikes";
 
 class RecipeListItem extends Component {
   render() {
-    const { recipe, selectRecipe} = this.props;
+    const { recipe} = this.props;
     return (
       <Segment.Group>
         <Segment>
           <Image
             className='ui fluid cur_p'
             src={recipe.pictureURL}
-            onClick={() => selectRecipe(recipe)}
+            as={Link} to={`/przepisy/${recipe.id}`}
           />
           <h2 className='recipe-header'>{recipe.title || ""}</h2>
           <small>Autor(ka) {recipe.createdBy}</small>

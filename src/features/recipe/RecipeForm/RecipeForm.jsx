@@ -1,13 +1,36 @@
+import cuid from "cuid";
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { Segment, Form, Button, Header } from "semantic-ui-react";
+import { createRecipe, updateRecipe } from "../recipeActions";
 
-class RecipeForm extends Component {
-  state = {
+const mapStateToProps = (state, ownProps) => {
+  const recipeId = ownProps.match.params.id;
+
+  let recipe = {
     title: "",
     time: 0,
     description: "",
     createdBy: "",
+    peopleCount: "",
   };
+
+  if (recipeId && state.recipes.length > 0) {
+    recipe = state.recipes.filter((recipe) => recipe.id === recipeId)[0];
+  }
+
+  return {
+    recipe,
+  };
+};
+
+const mapDispatchToProps = {
+  createRecipe,
+  updateRecipe,
+};
+
+class RecipeForm extends Component {
+  state = { ...this.props.recipe };
 
   componentDidMount() {
     if (this.props.selectedRecipe !== null) {
@@ -21,17 +44,25 @@ class RecipeForm extends Component {
     e.preventDefault();
     if (this.state.id) {
       this.props.updateRecipe(this.state);
+      this.props.history.push(`/przepisy/${this.state.id}`);
     } else {
-      this.props.createRecipe(this.state);
+      const newRecipe = {
+        ...this.state,
+        id: cuid(),
+        pictureURL: "/assets/dummyRecipe.jpg",
+      };
+      this.props.createRecipe(newRecipe);
+      this.props.history.push("/przepisy");
     }
   };
 
-  // TODO - do usunięcia - referencja do testów bez destrukturyzacji
-  // handleInputChange = (e) => {
-  //   this.setState({
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
+  handleCancelForm = () => {
+    if (this.state.id) {
+      this.props.history.push(`/przepisy/${this.state.id}`);
+    } else {
+      this.props.history.push("/przepisy");
+    }
+  };
 
   handleInputChange = ({ target: { name, value } }) => {
     this.setState({
@@ -40,8 +71,7 @@ class RecipeForm extends Component {
   };
 
   render() {
-    const { closeForm } = this.props;
-    const { title, time, description, createdBy } = this.state;
+    const { title, time, description, createdBy, peopleCount } = this.state;
 
     return (
       <Segment style={{ width: "50%" }}>
@@ -70,6 +100,15 @@ class RecipeForm extends Component {
             ></input>
           </Form.Field>
           <Form.Field>
+            <label>Liczba osób</label>
+            <input
+              type='number'
+              name='peopleCount'
+              value={peopleCount}
+              onChange={this.handleInputChange}
+            ></input>
+          </Form.Field>
+          <Form.Field>
             <label>Opis</label>
             <textarea
               placeholder='Opis...'
@@ -90,23 +129,13 @@ class RecipeForm extends Component {
           <Button primary type='submit' floated='right'>
             Zapisz
           </Button>
-          <Button type='button' onClick={closeForm}>
+          <Button type='button' onClick={this.handleCancelForm}>
             Anuluj
           </Button>
-          {this.state.id && (
-            <Button
-              negative
-              type='button'
-              onClick={() => this.props.deleteRecipe(this.state.id)}
-            >
-              Usuń
-            </Button>
-          )}
-        
         </Form>
       </Segment>
     );
   }
 }
 
-export default RecipeForm;
+export default connect(mapStateToProps, mapDispatchToProps)(RecipeForm);

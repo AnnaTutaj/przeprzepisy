@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import RecipeDashboard from "../../features/recipe/RecipeDashboard/RecipeDashboard";
 import NavBar from "../../features/nav/NavBar/NavBar";
 import { Container } from "semantic-ui-react";
-import { Route } from "react-router-dom";
+import { Route, Switch, withRouter } from "react-router-dom";
 import HomePage from "../../features/home/HomePage";
 import RecipeViewPage from "../../features/recipe/RecipeView/RecipeViewPage";
 import PeopleDashboard from "../../features/user/PeopleDashboard/PeopleDashboard";
@@ -21,12 +21,17 @@ class App extends Component {
             <>
               <NavBar />
               <Container className='main'>
-                <Route path='/przepisy' component={RecipeDashboard} />
-                <Route path='/przepisy/:id' component={RecipeViewPage} />
-                <Route path='/uzytkownicy' component={PeopleDashboard} />
-                <Route path='/uzytkownik/:id' component={UserViewPage} />
-                <Route path='/ustawienia' component={SettingsDashboard} />
-                <Route path='/dodaj-przepis' component={RecipeForm} />
+                <Switch key={this.props.location.key}>
+                  <Route exact path='/przepisy' component={RecipeDashboard} />
+                  <Route path='/przepisy/:id' component={RecipeViewPage} />
+                  <Route path='/uzytkownicy' component={PeopleDashboard} />
+                  <Route path='/uzytkownik/:id' component={UserViewPage} />
+                  <Route path='/ustawienia' component={SettingsDashboard} />
+                  <Route
+                    path={["/dodaj-przepis", "/edytuj-przepis/:id"]}
+                    component={RecipeForm}
+                  />
+                </Switch>
               </Container>
             </>
           )}
@@ -36,4 +41,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withRouter(App);
