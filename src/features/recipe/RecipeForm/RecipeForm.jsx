@@ -9,9 +9,9 @@ import {
   hasLengthLessThan,
 } from "revalidate";
 import { Segment, Form, Button, Header } from "semantic-ui-react";
-import TextAreaInput from "../../../app/common/util/form/TextAreaInput";
-import TextInput from "../../../app/common/util/form/TextInput";
-import SelectInput from "../../../app/common/util/form/SelectInput";
+import TextAreaInput from "../../../app/common/form/TextAreaInput";
+import TextInput from "../../../app/common/form/TextInput";
+import SelectInput from "../../../app/common/form/SelectInput";
 import { createRecipe, updateRecipe } from "../recipeActions";
 
 const mapStateToProps = (state, ownProps) => {
