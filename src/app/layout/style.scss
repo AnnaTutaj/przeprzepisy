@@ -8,6 +8,40 @@ body {
     cursor: pointer;
 }
 
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+@for $i from 1 through 100 {
+    .m#{$i} {
+        margin: #{$i}px;
+    }
+
+    .mt#{$i} {
+        margin-top: #{$i}px;
+    }
+
+    .mr#{$i} {
+        margin-right: #{$i}px;
+    }
+
+    .mb#{$i} {
+        margin-bottom: #{$i}px;
+    }
+
+    .ml#{$i} {
+        margin-left: #{$i}px;
+    }
+}
+
 /* Navbar styles */
 .ui.fixed.menu {
     height: $navbarHeight;
