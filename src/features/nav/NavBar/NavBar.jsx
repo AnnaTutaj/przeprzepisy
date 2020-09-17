@@ -5,9 +5,15 @@ import { NavLink, Link, withRouter } from "react-router-dom";
 import SignedOutMenu from "./Menus/SignedOutMenu";
 import SignedInMenu from "./Menus/SignedInMenu";
 import { openModal } from "../../modals/modalActions";
+import { logout } from "../../auth/authActions";
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
 
 const mapDispatchToProps = {
   openModal,
+  logout,
 };
 
 class NavBar extends Component {
@@ -24,12 +30,14 @@ class NavBar extends Component {
   };
 
   handleSignOut = () => {
-    this.setState({ authenticated: false });
+    this.props.logout();
     this.props.history.push("/");
   };
 
   render() {
-    const { authenticated } = this.state;
+    const { auth } = this.props;
+    const authenticated = auth.authenticated;
+
     return (
       <Menu inverted fixed='top'>
         <Container>
@@ -51,17 +59,23 @@ class NavBar extends Component {
             content='Użytkownicy'
           />
           {authenticated ? (
-            <SignedInMenu signOut={this.handleSignOut} />
+            <SignedInMenu
+              signOut={this.handleSignOut}
+              currentUser={auth.currentUser}
+            />
           ) : (
-            <SignedOutMenu signIn={this.handleSignIn} register={this.handleRegister}/>
+            <SignedOutMenu
+              signIn={this.handleSignIn}
+              register={this.handleRegister}
+            />
           )}
           <Menu.Item as={Link} to='/dodaj-przepis'>
             <Button floated='right' primary content='Dodaj przepis' />
           </Menu.Item>
         </Container>
       </Menu>
-    ); 
+    );
   }
 }
 
-export default withRouter(connect(null, mapDispatchToProps)(NavBar));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NavBar));

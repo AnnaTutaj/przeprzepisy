@@ -1,12 +1,18 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Form, Button } from "semantic-ui-react";
 import { Field, reduxForm } from "redux-form";
 import TextInput from "../../../app/common/form/TextInput";
+import { login } from "../authActions";
 
-const LoginForm = () => {
+const mapDispatchToProps = {
+  login,
+};
+
+const LoginForm = ({ login, handleSubmit }) => {
   return (
     <>
-      <Form size='large'>
+      <Form size='large' onSubmit={handleSubmit(login)}>
         <Field
           name='login'
           component={TextInput}
@@ -27,4 +33,4 @@ const LoginForm = () => {
   );
 };
 
-export default reduxForm({ form: "loginForm" })(LoginForm);
+export default connect(null, mapDispatchToProps)(reduxForm({ form: "loginForm" })(LoginForm));
