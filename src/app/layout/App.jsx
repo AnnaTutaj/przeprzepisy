@@ -9,11 +9,13 @@ import PeopleDashboard from "../../features/user/PeopleDashboard/PeopleDashboard
 import UserViewPage from "../../features/user/UserView/UserViewPage";
 import SettingsDashboard from "../../features/user/Settings/SettingsDashboard";
 import RecipeForm from "../../features/recipe/RecipeForm/RecipeForm";
+import ModalManager from "../../features/modals/ModalManager";
 
 class App extends Component {
   render() {
     return (
       <>
+        <ModalManager />
         <Route exact path='/' component={HomePage} />
         <Route
           path='/(.+)'
