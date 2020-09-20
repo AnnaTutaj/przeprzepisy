@@ -3,14 +3,20 @@ import { Grid, Segment } from "semantic-ui-react";
 import { connect } from "react-redux";
 
 import RecipeList from "../RecipeList/RecipeList";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 const mapStateToProps = (state) => ({
   recipes: state.recipes,
+  loading: state.async.loading,
 });
 
 class RecipeDashboard extends Component {
   render() {
-    const { recipes } = this.props;
+    const { recipes, loading } = this.props;
+
+    if (loading) {
+      return <LoadingComponent />;
+    }
 
     return (
       <>

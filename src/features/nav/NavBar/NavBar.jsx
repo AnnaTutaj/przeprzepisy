@@ -51,13 +51,15 @@ class NavBar extends Component {
             name='recipes'
             content='Przepisy'
           />
-          <Menu.Item
-            as={NavLink}
-            exact
-            to='/uzytkownicy'
-            name='users'
-            content='Użytkownicy'
-          />
+          {authenticated && (
+            <Menu.Item
+              as={NavLink}
+              exact
+              to='/uzytkownicy'
+              name='users'
+              content='Użytkownicy'
+            />
+          )}
           {authenticated ? (
             <SignedInMenu
               signOut={this.handleSignOut}
@@ -69,9 +71,11 @@ class NavBar extends Component {
               register={this.handleRegister}
             />
           )}
-          <Menu.Item as={Link} to='/dodaj-przepis'>
-            <Button floated='right' primary content='Dodaj przepis' />
-          </Menu.Item>
+          {authenticated && (
+            <Menu.Item as={Link} to='/dodaj-przepis'>
+              <Button floated='right' primary content='Dodaj przepis' />
+            </Menu.Item>
+          )}
         </Container>
       </Menu>
     );
