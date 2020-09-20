@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 
 import RecipeList from "../RecipeList/RecipeList";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import RecipeNewest from "../RecipeNewest/RecipeNewest";
 
 const mapStateToProps = (state) => ({
   recipes: state.recipes,
@@ -22,9 +23,7 @@ class RecipeDashboard extends Component {
       <>
         <Grid>
           <Grid.Row>
-            <RecipeList
-              recipes={recipes}
-            />
+            <RecipeList recipes={recipes} />
           </Grid.Row>
           <Grid.Row>
             <Grid.Column>
@@ -35,12 +34,7 @@ class RecipeDashboard extends Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column>
-              <h2>Ostatnio dodane</h2>
-              <Segment>
-                <h3>W budowie...</h3>
-              </Segment>
-            </Grid.Column>
+            <RecipeNewest />
           </Grid.Row>
         </Grid>
       </>
