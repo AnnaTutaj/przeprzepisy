@@ -5,9 +5,10 @@ import { connect } from "react-redux";
 import RecipeList from "../RecipeList/RecipeList";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import RecipeNewest from "../RecipeNewest/RecipeNewest";
+import { firestoreConnect } from "react-redux-firebase";
 
 const mapStateToProps = (state) => ({
-  recipes: state.recipes,
+  recipes: state.firestore.ordered.recipes,
   loading: state.async.loading,
 });
 
@@ -42,4 +43,6 @@ class RecipeDashboard extends Component {
   }
 }
 
-export default connect(mapStateToProps)(RecipeDashboard);
+export default connect(mapStateToProps)(
+  firestoreConnect([{ collection: "recipes" }])(RecipeDashboard)
+);

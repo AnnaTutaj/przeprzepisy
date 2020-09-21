@@ -21,8 +21,8 @@ class RecipeListItem extends Component {
         <Segment>
           <List horizontal>
             {recipe.likedBy &&
-              recipe.likedBy.map((likedBy) => (
-                <RecipeLikes key={likedBy.id} likedBy={likedBy} />
+              Object.values(recipe.likedBy).map((likedBy, index) => (
+                <RecipeLikes key={index} likedBy={likedBy} />
               ))}
           </List>
         </Segment>

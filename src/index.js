@@ -10,10 +10,8 @@ import ReduxToastr from 'react-redux-toastr';
 import 'semantic-ui-less/semantic.less'
 import { configStore } from './app/store/configStore';
 import ScrollToTop from './app/common/util/ScrollToTop';
-import { loadRecipes } from './features/recipe/recipeActions';
 
 const store = configStore();
-store.dispatch(loadRecipes());
 
 const rootElement = document.getElementById('root');
 

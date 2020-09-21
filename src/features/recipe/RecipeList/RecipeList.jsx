@@ -9,7 +9,7 @@ class RecipeList extends Component {
       <>
         <h2>W tym tygodniu polecamy</h2>
         <Grid>
-          {recipes.map((recipe) => (
+          {recipes && recipes.map((recipe) => (
             <Grid.Column key={recipe.id} width={4}>
               <RecipeListItem key={recipe.id} recipe={recipe} />
             </Grid.Column>
