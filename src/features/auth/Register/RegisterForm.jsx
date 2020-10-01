@@ -1,12 +1,32 @@
 import React from "react";
-import { Form, Button } from "semantic-ui-react";
+import { connect } from "react-redux";
+import { combineValidators, isRequired } from "revalidate";
+import { Form, Button, Message } from "semantic-ui-react";
 import { Field, reduxForm } from "redux-form";
 import TextInput from "../../../app/common/form/TextInput";
+import { registerUser } from "../authActions";
 
-const RegisterForm = () => {
+const mapDispatchToProps = {
+  registerUser,
+};
+
+const isRequiredText = "Pole jest wymagane";
+
+const validate = combineValidators({
+  nick: isRequired({ message: isRequiredText }),
+  email: isRequired({ message: isRequiredText }),
+  password: isRequired({ message: isRequiredText }),
+});
+const RegisterForm = ({
+  handleSubmit,
+  registerUser,
+  error,
+  invalid,
+  submitting,
+}) => {
   return (
     <>
-      <Form size='large'>
+      <Form size='large' onSubmit={handleSubmit(registerUser)} error>
         <Field
           name='nick'
           type='text'
@@ -25,7 +45,8 @@ const RegisterForm = () => {
           component={TextInput}
           placeholder='Hasło'
         />
-        <Button fluid size='large' primary>
+        {error && <Message error header='' content={error} />}
+        <Button disabled={submitting} fluid size='large' primary>
           Zarejestruj się
         </Button>
       </Form>
@@ -33,4 +54,7 @@ const RegisterForm = () => {
   );
 };
 
-export default reduxForm({ form: "registerForm" })(RegisterForm);
+export default connect(
+  null,
+  mapDispatchToProps
+)(reduxForm({ form: "registerForm", validate })(RegisterForm));

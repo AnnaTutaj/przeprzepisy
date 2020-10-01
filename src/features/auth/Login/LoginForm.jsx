@@ -14,7 +14,7 @@ const LoginForm = ({ login, handleSubmit, error }) => {
     <>
       <Form size='large' onSubmit={handleSubmit(login)} error>
         <Field
-          name='login'
+          name='email'
           component={TextInput}
           type='text'
           placeholder='Twój email'
