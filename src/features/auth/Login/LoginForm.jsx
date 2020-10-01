@@ -1,15 +1,17 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Form, Button, Message } from "semantic-ui-react";
+import { Form, Button, Message, Divider } from "semantic-ui-react";
 import { Field, reduxForm } from "redux-form";
 import TextInput from "../../../app/common/form/TextInput";
-import { login } from "../authActions";
+import { login, federatedLogin } from "../authActions";
+import FederatedLogin from "../FederatedLogin/FederatedLogin";
 
 const mapDispatchToProps = {
   login,
+  federatedLogin,
 };
 
-const LoginForm = ({ login, handleSubmit, error }) => {
+const LoginForm = ({ login, federatedLogin, handleSubmit, error }) => {
   return (
     <>
       <Form size='large' onSubmit={handleSubmit(login)} error>
@@ -25,16 +27,12 @@ const LoginForm = ({ login, handleSubmit, error }) => {
           type='password'
           placeholder='Hasło'
         />
-        {error && (
-            <Message
-            error
-            header=''
-            content={error}
-          />
-        )}
+        {error && <Message error header='' content={error} />}
         <Button fluid size='large' primary>
           Zaloguj się
         </Button>
+        <Divider horizontal>albo</Divider>
+        <FederatedLogin federatedLogin={federatedLogin} />
       </Form>
     </>
   );

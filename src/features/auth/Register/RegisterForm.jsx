@@ -1,13 +1,15 @@
 import React from "react";
 import { connect } from "react-redux";
 import { combineValidators, isRequired } from "revalidate";
-import { Form, Button, Message } from "semantic-ui-react";
+import { Form, Button, Message, Divider } from "semantic-ui-react";
 import { Field, reduxForm } from "redux-form";
 import TextInput from "../../../app/common/form/TextInput";
-import { registerUser } from "../authActions";
+import { registerUser, federatedLogin } from "../authActions";
+import FederatedLogin from "../FederatedLogin/FederatedLogin";
 
 const mapDispatchToProps = {
   registerUser,
+  federatedLogin
 };
 
 const isRequiredText = "Pole jest wymagane";
@@ -20,6 +22,7 @@ const validate = combineValidators({
 const RegisterForm = ({
   handleSubmit,
   registerUser,
+  federatedLogin,
   error,
   invalid,
   submitting,
@@ -49,6 +52,8 @@ const RegisterForm = ({
         <Button disabled={submitting} fluid size='large' primary>
           Zarejestruj się
         </Button>
+        <Divider horizontal>albo</Divider>
+        <FederatedLogin federatedLogin={federatedLogin} />
       </Form>
     </>
   );
