@@ -6,18 +6,17 @@ import { Field, reduxForm } from "redux-form";
 import TextInput from "../../../app/common/form/TextInput";
 import { registerUser, federatedLogin } from "../authActions";
 import FederatedLogin from "../FederatedLogin/FederatedLogin";
+import texts from "../../../app/common/texts";
 
 const mapDispatchToProps = {
   registerUser,
-  federatedLogin
+  federatedLogin,
 };
 
-const isRequiredText = "Pole jest wymagane";
-
 const validate = combineValidators({
-  nick: isRequired({ message: isRequiredText }),
-  email: isRequired({ message: isRequiredText }),
-  password: isRequired({ message: isRequiredText }),
+  nick: isRequired({ message: texts["isRequired"] }),
+  email: isRequired({ message: texts["isRequired"] }),
+  password: isRequired({ message: texts["isRequired"] }),
 });
 const RegisterForm = ({
   handleSubmit,

@@ -13,6 +13,7 @@ import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import TextInput from "../../../app/common/form/TextInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import { createRecipe, updateRecipe } from "../recipeActions";
+import texts from "../../../app/common/texts";
 
 const mapStateToProps = (state, ownProps) => {
   const recipeId = ownProps.match.params.id;
@@ -31,13 +32,12 @@ const mapDispatchToProps = {
   updateRecipe,
 };
 
-const isRequiredText = "Pole jest wymagane";
 const validate = combineValidators({
-  title: isRequired({ message: isRequiredText }),
-  time: isRequired({ message: isRequiredText }),
-  peopleCount: isRequired({ message: isRequiredText }),
+  title: isRequired({ message: texts["isRequired"] }),
+  time: isRequired({ message: texts["isRequired"] }),
+  peopleCount: isRequired({ message: texts["isRequired"] }),
   description: composeValidators(
-    isRequired({ message: isRequiredText }),
+    isRequired({ message: texts["isRequired"] }),
     hasLengthLessThan(10000)({ message: "Limit znaków w opisie wynosi 10000" })
   )(),
 });

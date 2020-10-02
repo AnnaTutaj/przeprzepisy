@@ -1,4 +1,5 @@
-import { SubmissionError } from 'redux-form';
+import { toastr } from 'react-redux-toastr';
+import { SubmissionError, reset } from 'redux-form';
 import firebaseTranslations from '../../app/common/firebaseTranslations';
 import { closeModal } from "../modals/modalActions";
 
@@ -79,5 +80,21 @@ export const federatedLogin = (selectedProvider) => {
 
         }
     }
+}
 
+export const changePassword = (credentials) => {
+    return async (dispatch, getState, { getFirebase }) => {
+        const firebase = getFirebase();
+        const user = firebase.auth().currentUser;
+        try {
+            await user.updatePassword(credentials.newPassword1);
+            await dispatch(reset('accountForm'));
+            toastr.success('Sukces!', 'Hasło zostało zmienione');
+        }
+        catch (error) {
+            throw new SubmissionError({
+                _error: firebaseTranslations[error.code] || 'Coś poszło nie tak... proszę spróbować później',
+            })
+        }
+    }
 }
