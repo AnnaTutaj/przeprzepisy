@@ -14,7 +14,12 @@ const FederatedLogin = ({ federatedLogin }) => {
         <Icon name='facebook' /> Zaloguj się przez Facebook
       </Button>
 
-      <Button color='google plus' type='button' fluid>
+      <Button
+        onClick={() => federatedLogin("google")}
+        color='google plus'
+        type='button'
+        fluid
+      >
         <Icon name='google plus' />
         Zaloguj się przez Google
       </Button>
