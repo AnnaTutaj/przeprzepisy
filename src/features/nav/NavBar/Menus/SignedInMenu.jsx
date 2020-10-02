@@ -2,15 +2,16 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Dropdown, Image, Menu } from "semantic-ui-react";
 
-const trigger = <Image avatar src='/assets/dummyUser.png' />;
 
-const SignedInMenu = ({signOut, auth}) => {
+const SignedInMenu = ({signOut, profile}) => {
+  const trigger = <Image avatar src={profile.pictureURL || '/assets/dummyUser.png'} />;
+
   return (
     <Menu.Item position='right'>
       <Dropdown pointing='top left' trigger={trigger}>
         <Dropdown.Menu>
           {/* todo gdy już będzie zmienione logowanie, to zmienić na nick */}
-          <Dropdown.Header content={`Profil ${auth.email}`} />
+          <Dropdown.Header content={`Profil ${profile.nick}`} />
           <Dropdown.Item text='Mój profil' icon='user' />
           <Dropdown.Item
             as={Link}

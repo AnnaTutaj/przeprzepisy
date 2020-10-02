@@ -55,17 +55,27 @@ export const registerUser = user => {
 }
 
 export const federatedLogin = (selectedProvider) => {
-    return async (dispatch, getState, {getFirebase}) => {
+    return async (dispatch, getState, { getFirebase, getFirestore }) => {
         const firebase = getFirebase();
+        const firestore = getFirestore();
 
         try {
             dispatch(closeModal());
-            await firebase.login({
+            let user = await firebase.login({
                 provider: selectedProvider,
                 type: 'popup'
             })
+
+            if (user.additionalUserInfo.isNewUser) {
+                await firestore.set(`users/${user.user.uid}`, {
+                    nick: user.profile.displayName,
+                    pictureURL: user.profile.avatarUrl,
+                    createdAt: firestore.FieldValue.serverTimestamp()
+                })
+
+            }
         }
-        catch(error){
+        catch (error) {
 
         }
     }
