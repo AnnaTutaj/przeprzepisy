@@ -34,11 +34,11 @@ export const registerUser = user => {
         try {
             let createdUser = await firebase.auth().createUserWithEmailAndPassword(user.email, user.password);
             await createdUser.user.updateProfile({
-                displayName: user.nick
+                nick: user.nick
             })
 
             let newUser = {
-                displayName: user.nick,
+                nick: user.nick,
                 createdAt: firestore.FieldValue.serverTimestamp(),
             }
 
