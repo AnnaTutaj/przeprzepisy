@@ -14,7 +14,7 @@ const SelectInput = ({
     <Form.Field error={touched && !!error}>
       <label>{label}</label>
       <Select
-        value={input.value || null}
+        value={input.value || (multiple ? [] : null)}
         onChange={(e, data) => input.onChange(data.value)}
         placeholder={placeholder}
         options={options}
