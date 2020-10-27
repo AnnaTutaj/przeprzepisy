@@ -13,7 +13,7 @@ const SettingsNav = () => {
           Zmień hasło
         </Menu.Item>
         <Menu.Item as={NavLink} to='/ustawienia/zdjecia'>
-          Moje zdjęcia
+          Zdjęcia
         </Menu.Item>
       </Menu>
     </>

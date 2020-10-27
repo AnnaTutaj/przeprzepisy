@@ -4,7 +4,7 @@ import { Grid } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { changePassword } from "../../auth/authActions";
 import AccountPage from "./AccountPage";
-import PhotosPage from "./PhotosPage";
+import PhotosPage from "./Photos/PhotosPage";
 import ChangePasswordPage from "./ChangePasswordPage";
 import SettingsNav from "./SettingsNav";
 import { updateProfile } from "../../user/userActions";
