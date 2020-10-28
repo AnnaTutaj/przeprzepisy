@@ -4,6 +4,7 @@ import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import { Grid } from "semantic-ui-react";
 import ProfileInfo from "./ProfileInfo";
+import UserPhotos from "./UserPhotos";
 
 const userDataFetch = ({ userId }) => {
   return [
@@ -41,6 +42,7 @@ class UserViewPage extends Component {
           <ProfileInfo profile={profile} />
         </Grid.Column>
         <Grid.Column width={12}>
+          <UserPhotos photos={photos} />
         </Grid.Column>
       </Grid>
     );
