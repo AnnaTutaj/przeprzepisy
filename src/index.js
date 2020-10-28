@@ -10,12 +10,17 @@ import ReduxToastr from 'react-redux-toastr';
 import 'semantic-ui-less/semantic.less'
 import { configStore } from './app/store/configStore';
 import ScrollToTop from './app/common/util/ScrollToTop';
+import moment from "moment";
+import 'moment/locale/pl'  
 
 const store = configStore();
 
 const rootElement = document.getElementById('root');
 
+
 let render = () => {
+  moment.locale('pl')
+
   ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
