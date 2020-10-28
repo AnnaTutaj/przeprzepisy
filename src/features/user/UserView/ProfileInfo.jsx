@@ -43,7 +43,7 @@ class ProfileInfo extends Component {
     // todo tłumaczenia ulubionych kategorii, teraz są keys pokazywane
     return (
       <Card>
-        <Image src={profile[0].pictureURL} wrapped ui={false} />
+        <Image src={profile[0].pictureURL || '/assets/dummyUser.png'} wrapped ui={false} />
         <Card.Content>
           {genderIconName && (
             <Icon className='right floated' name={genderIconName}></Icon>
