@@ -10,7 +10,6 @@ const SignedInMenu = ({signOut, profile}) => {
     <Menu.Item position='right'>
       <Dropdown pointing='top left' trigger={trigger}>
         <Dropdown.Menu>
-          {/* todo gdy już będzie zmienione logowanie, to zmienić na nick */}
           <Dropdown.Header content={`Profil ${profile.nick}`} />
           <Dropdown.Item text='Mój profil' icon='user' />
           <Dropdown.Item
