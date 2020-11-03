@@ -86,3 +86,52 @@ export const setProfilePhoto = (photo) =>
             throw new Error('Nie udało się ustawić zdjęcia profilowego')
         }
     }
+
+export const addFavRecipe = (recipe) =>
+    async (dispatch, getState, { getFirebase, getFirestore }) => {
+        const firebase = getFirebase();
+        const firestore = getFirestore();
+        const user = firebase.auth().currentUser;
+        const profile = getState().firebase.profile;
+
+        const likedBy = {
+            createdAt: firestore.FieldValue.serverTimestamp(),
+            pictureURL: profile.pictureURL,
+            nick: profile.nick,
+            createdByUser: false
+        }
+
+        try {
+            await firestore.update(`recipes/${recipe.id}`, {
+                [`likedBy.${user.uid}`]: likedBy
+            })
+            await firestore.set(`recipe_likes/${recipe.id}_${user.uid}`, {
+                recipeId: recipe.id,
+                userUid: user.uid,
+                createdByUser: false
+            });
+            toastr.success("Sukces", "Przepis został dodany do ulubionych");
+        } catch (error) {
+            console.log(error);
+            toastr.error("Oops", "Nie udało się dodać przepisu do ulubionych");
+
+        }
+    }
+
+export const removeFavRecipe = (recipe) =>
+    async (dispatch, getState, { getFirebase, getFirestore }) => {
+        const firebase = getFirebase();
+        const firestore = getFirestore();
+        const user = firebase.auth().currentUser;
+        try {
+            await firestore.update(`recipes/${recipe.id}`, {
+                [`likedBy.${user.uid}`]: firestore.FieldValue.delete()
+            });
+            await firestore.delete(`recipe_likes/${recipe.id}_${user.uid}`);
+            toastr.success("Sukces", "Przepis został usunięty z ulubionych");
+        } catch (error) {
+            console.log(error);
+            toastr.error("Oops", "Nie udało się usunąć przepisu z ulubionych");
+        }
+
+    }

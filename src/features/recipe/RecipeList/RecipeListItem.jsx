@@ -11,7 +11,7 @@ class RecipeListItem extends Component {
         <Segment>
           <Image
             className='ui fluid cur_p'
-            src={recipe.pictureURL}
+            src={recipe.pictureURL || '/assets/dummyRecipe.jpg'}
             as={Link} to={`/przepisy/${recipe.id}`}
           />
           <h2 className='recipe-header'>{recipe.title || ""}</h2>

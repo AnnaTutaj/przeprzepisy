@@ -6,43 +6,76 @@ import RecipeViewDescription from "./RecipeViewDescription";
 import RecipeViewHeader from "./RecipeViewHeader";
 import RecipeViewIngredients from "./RecipeViewIngredients";
 import RecipeViewLikes from "./RecipeViewLikes";
-import { deleteRecipe } from "../recipeActions";
+import { deleteRecipe, hideRecipeToggle } from "../recipeActions";
+import { withFirestore } from "react-redux-firebase";
+import { objectToArray } from "../../../app/common/util/helpers";
+import { addFavRecipe, removeFavRecipe } from "../../user/userActions";
 
 const mapStateToProps = (state, ownProps) => {
   const recipeId = ownProps.match.params.id;
 
   let recipe = {};
 
-  if (recipeId && state.recipes.length > 0) {
-    recipe = state.recipes.filter((recipe) => recipe.id === recipeId)[0];
+  if (
+    state.firestore.ordered.recipes &&
+    state.firestore.ordered.recipes.length > 0
+  ) {
+    recipe =
+      state.firestore.ordered.recipes.filter(
+        (recipe) => recipe.id === recipeId
+      )[0] || {};
   }
 
   return {
     recipe,
+    auth: state.firebase.auth,
   };
 };
 
 const mapDispatchToProps = {
   deleteRecipe,
-};
+  hideRecipeToggle,
+  addFavRecipe,
+  removeFavRecipe
+ };
 
 class RecipeViewPage extends Component {
+  async componentDidMount() {
+    const { firestore, match } = this.props;
+     await firestore.setListener(`recipes/${match.params.id}`);
+  }
+
+  async componentWillUnmount() {
+    const { firestore, match } = this.props;
+    await firestore.unsetListener(`recipes/${match.params.id}`);
+  }
+
   //todo do poprawy
   handleDeleteRecipe = (recipeId) => {
     this.props.deleteRecipe(recipeId);
     this.props.history.push("/przepisy");
   };
 
+  handleHideRecipeToggle = (hide, recipeId) => {
+    this.props.hideRecipeToggle(hide, recipeId);
+  };
+
   render() {
-    const { recipe } = this.props;
+    const { recipe, auth, addFavRecipe, removeFavRecipe } = this.props;
+    const likedBy = recipe && recipe.likedBy && objectToArray(recipe.likedBy);
 
     return (
       <div>
         <Grid>
           <Grid.Row stretched>
             <RecipeViewHeader
+              auth={auth}
               recipe={recipe}
               deleteRecipe={this.handleDeleteRecipe}
+              hideRecipeToggle={this.handleHideRecipeToggle}
+              likedBy={likedBy}
+              addFavRecipe={addFavRecipe}
+              removeFavRecipe={removeFavRecipe}
             />
           </Grid.Row>
           <Grid.Row stretched>
@@ -58,7 +91,7 @@ class RecipeViewPage extends Component {
               <RecipeViewComments />
             </Grid.Column>
             <Grid.Column mobile={16} computer={8}>
-              <RecipeViewLikes likedBy={recipe.likedBy} />
+              <RecipeViewLikes likedBy={likedBy} />
             </Grid.Column>
           </Grid.Row>
         </Grid>
@@ -67,4 +100,6 @@ class RecipeViewPage extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RecipeViewPage);
+export default withFirestore(
+  connect(mapStateToProps, mapDispatchToProps)(RecipeViewPage)
+);

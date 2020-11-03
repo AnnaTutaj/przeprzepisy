@@ -1,61 +1,65 @@
 import { toastr } from "react-redux-toastr"
-import { fetchSampleRecipes } from "../../app/data/mockApi"
-import { asyncActionError, asyncActionFinish, asyncActionStart } from "../async/asyncActions"
-import { CREATE_RECIPE, DELETE_RECIPE, FETCH_RECIPES, UPDATE_RECIPE } from "./recipeConstants"
+import { createNewRecipe } from "../../app/common/util/helpers"
 
 export const createRecipe = (recipe) => {
-    return async dispatch => {
+    return async (dispatch, getState, { getFirestore, getFirebase }) => {
+        const firestore = getFirestore();
+        const firebase = getFirebase();
+        const user = firebase.auth().currentUser;
+        const profile = getState().firebase.profile;
+        const newRecipe = createNewRecipe(user, profile, recipe);
         try {
-            dispatch({
-                type: CREATE_RECIPE,
-                payload: {
-                    recipe
-                }
-            })
+            let createdRecipe = await firestore.add('recipes', newRecipe);
             toastr.success('Sukces!', 'Przepis został dodany');
+            return createdRecipe;
         }
         catch (error) {
-            toastr.success('OOps!', 'Coś poszło nie tak');
+            toastr.error('Oops!', 'Coś poszło nie tak');
         }
     }
 }
 
 export const updateRecipe = (recipe) => {
-    return async dispatch => {
+    return async (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore();
         try {
-            dispatch({
-                type: UPDATE_RECIPE,
-                payload: {
-                    recipe
-                }
-            })
+            await firestore.update(`recipes/${recipe.id}`, recipe);
             toastr.success('Sukces!', 'Przepis został zaktualizowany');
         }
         catch (error) {
-            toastr.success('OOps!', 'Coś poszło nie tak');
+            toastr.error('Oops!', 'Coś poszło nie tak');
         }
     }
 }
+
+export const hideRecipeToggle = (hide, recipeId) =>
+    async (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore();
+        const message = hide ? "Czy na pewno chcesz ukryć przepis?" : "Czy na pewno chcesz pokazać przepis?";
+        try {
+            toastr.confirm(message, {
+                onOk: async () => await firestore.update(`recipes/${recipeId}`, {
+                    hide: hide
+                }),
+                okText: 'Tak',
+                cancelText: 'Anuluj'
+            })
+        } catch (error) {
+            toastr.error('Oops!', 'Coś poszło nie tak');
+        }
+    }
+
 
 export const deleteRecipe = (recipeId) => {
-    return {
-        type: DELETE_RECIPE,
-        payload: {
-            recipeId
-        }
-    }
-}
-
-export const loadRecipes = () => {
-    return async dispatch => {
+    return async (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore();
         try {
-            dispatch(asyncActionStart())
-            const recipes = await fetchSampleRecipes();
-            dispatch({ type: FETCH_RECIPES, payload: { recipes } });
-            dispatch(asyncActionFinish());
-        } catch (error) {
-            dispatch(asyncActionError());
+            await firestore.delete({ collection: 'recipes', doc: recipeId });
+            //todo przemyśleć dodatkowe usuwanie z ulubionych (recipe_likes collection)
+            toastr.success('Sukces!', 'Przepis został usunięty');
         }
-
+        catch (error) {
+            toastr.error('Oops!', 'Nie udało się usunąć przepisu');
+        }
     }
 }

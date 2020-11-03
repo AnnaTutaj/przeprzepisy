@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, Image, Segment } from "semantic-ui-react";
+import { Header, Image, Segment, Popup } from "semantic-ui-react";
 
 const RecipeViewLikes = ({ likedBy }) => {
   return (
@@ -9,7 +9,11 @@ const RecipeViewLikes = ({ likedBy }) => {
         <Image.Group size='mini'>
           {likedBy &&
             likedBy.map((user) => (
-              <Image key={user.id} src={user.pictureURL} />
+              <Popup
+                content={user.nick}
+                key={user.id}
+                trigger={<Image key={user.id} src={user.pictureURL} />}
+              />
             ))}
         </Image.Group>
       </Segment>

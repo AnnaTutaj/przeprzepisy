@@ -1,7 +1,8 @@
-import cuid from "cuid";
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { withFirestore } from "react-redux-firebase";
 import { reduxForm, Field } from "redux-form";
+import { toastr } from "react-redux-toastr";
 import {
   composeValidators,
   combineValidators,
@@ -18,12 +19,20 @@ import texts from "../../../app/common/texts";
 const mapStateToProps = (state, ownProps) => {
   const recipeId = ownProps.match.params.id;
   let recipe = {};
-  if (recipeId && state.recipes.length > 0) {
-    recipe = state.recipes.filter((recipe) => recipe.id === recipeId)[0];
+
+  if (
+    state.firestore.ordered.recipes &&
+    state.firestore.ordered.recipes.length > 0
+  ) {
+    recipe =
+      state.firestore.ordered.recipes.filter(
+        (recipe) => recipe.id === recipeId
+      )[0] || {};
   }
 
   return {
     initialValues: recipe,
+    recipe
   };
 };
 
@@ -63,30 +72,32 @@ const peopleCountList = [
 ];
 
 class RecipeForm extends Component {
-  state = { ...this.props.recipe };
+  state = {};
 
-  componentDidMount() {
-    if (this.props.selectedRecipe !== null) {
-      this.setState({
-        ...this.props.selectedRecipe,
-      });
+  async componentDidMount() {
+    const { firestore, match, history } = this.props;
+
+    if (match.params.id) {
+      let recipe = await firestore.get(`recipes/${match.params.id}`);
+      console.log(recipe.id);
+
+      if (!recipe.exists) {
+        history.push("/recipes");
+        toastr.error("Ooops", "Przepis nie został znaleziony");
+      }
     }
   }
 
-  onSubmitForm = (values) => {
-    if (this.props.initialValues.id) {
-      this.props.updateRecipe(values);
-      this.props.history.push(`/przepisy/${this.props.initialValues.id}`);
-    } else {
-      const newRecipe = {
-        ...values,
-        id: cuid(),
-        pictureURL: "/assets/dummyRecipe.jpg",
-        createdBy: "Jan Kowalski",
-      };
-      this.props.createRecipe(newRecipe);
-      this.props.history.push(`/przepisy/${newRecipe.id}`);
-    }
+  onSubmitForm = async (values) => {
+    try {
+      if (this.props.initialValues.id) {
+        this.props.updateRecipe(values);
+        this.props.history.push(`/przepisy/${this.props.initialValues.id}`);
+      } else {
+        let createdRecipe = await this.props.createRecipe(values);
+        this.props.history.push(`/przepisy/${createdRecipe.id}`);
+      }
+    } catch (error) {}
   };
 
   handleCancelForm = () => {
@@ -155,7 +166,9 @@ class RecipeForm extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(reduxForm({ form: "recipeForm", validate })(RecipeForm));
+export default withFirestore(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(reduxForm({ form: "recipeForm", validate, enableReinitialize: true })(RecipeForm))
+);

@@ -1,5 +1,4 @@
 import { combineReducers } from "redux";
-import recipeReducer from "../../features/recipe/recipeReducer";
 import { reducer as FormReducer } from 'redux-form';
 import { reducer as ToastrReducer } from 'react-redux-toastr';
 
@@ -15,7 +14,6 @@ const rootReducer = combineReducers({
     firebase: firebaseReducer,
     firestore: firestoreReducer,
     modals: modalReducer,
-    recipes: recipeReducer,
     auth: authReducer,
     async: asyncReducer
 })
