@@ -1,29 +1,48 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Segment, Image, List } from "semantic-ui-react";
+import { withRouter } from "react-router-dom";
+
+import { Segment, Image, List, Header } from "semantic-ui-react";
 import RecipeLikes from "./RecipeLikes";
+import { objectToArray } from "../../../app/common/util/helpers";
 
 class RecipeListItem extends Component {
+  goToRecipe = (recipeId) => {
+    this.props.history.push(`/przepisy/${recipeId}`);
+  };
+
   render() {
-    const { recipe} = this.props;
+    const { recipe } = this.props;
+    const likedBy = recipe && recipe.likedBy && objectToArray(recipe.likedBy);
+
     return (
       <Segment.Group>
         <Segment>
           <Image
             className='ui fluid cur_p'
-            src={recipe.pictureURL || '/assets/dummyRecipe.jpg'}
-            as={Link} to={`/przepisy/${recipe.id}`}
+            src={recipe.pictureURL || "/assets/dummyRecipe.jpg"}
+            as={Link}
+            to={`/przepisy/${recipe.id}`}
           />
-          <h2 className='recipe-header'>{recipe.title || ""}</h2>
-          <small>Autor(ka) {recipe.createdBy}</small>
+          <Header
+            as='h2'
+            className='recipe-header'
+            onClick={() => this.goToRecipe(recipe.id)}
+          >
+            {recipe.title || ""}
+          </Header>
+          <small>
+            Autor(ka):{" "}
+            <Link to={`uzytkownik/${recipe.createdByUid}`}>
+              {recipe.createdBy}
+            </Link>
+          </small>
           <div>{recipe.description}</div>
         </Segment>
         <Segment>
           <List horizontal>
-            {recipe.likedBy &&
-              Object.values(recipe.likedBy).map((likedBy, index) => (
-                <RecipeLikes key={index} likedBy={likedBy} />
-              ))}
+            {likedBy &&
+              likedBy.map((l) => <RecipeLikes key={l.id} likedBy={l} />)}
           </List>
         </Segment>
       </Segment.Group>
@@ -31,4 +50,4 @@ class RecipeListItem extends Component {
   }
 }
 
-export default RecipeListItem;
+export default withRouter(RecipeListItem);

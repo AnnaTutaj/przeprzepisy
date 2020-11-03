@@ -1,12 +1,26 @@
 import React, { Component } from "react";
-import { List, Image } from "semantic-ui-react";
+import { List, Image, Popup } from "semantic-ui-react";
+import { Link } from "react-router-dom";
 
 class RecipeLikes extends Component {
   render() {
     const { likedBy } = this.props;
     return (
       <List.Item>
-        <Image as='a' size='mini' circular src={likedBy.pictureURL} />
+        <Popup
+          content={likedBy.nick}
+          key={likedBy.id}
+          trigger={
+            <Image
+              key={likedBy.id}
+              size='mini'
+              circular
+              src={likedBy.pictureURL}
+              as={Link}
+              to={`/uzytkownik/${likedBy.id}`}
+            />
+          }
+        />
       </List.Item>
     );
   }

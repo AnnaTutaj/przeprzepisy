@@ -40,7 +40,10 @@ class RecipeViewHeader extends Component {
             )}
             <Header as='h1'>{recipe.title}</Header>
             <Header as='h3' style={{ paddingTop: "50px" }}>
-              Autor(ka): <strong>{recipe.createdBy}</strong>
+              Autor(ka):{" "}
+              <Link to={`/uzytkownik/${recipe.createdByUid}`}>
+                {recipe.createdBy}
+              </Link>
             </Header>
             <Statistic.Group
               size='mini'

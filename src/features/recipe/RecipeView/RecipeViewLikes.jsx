@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Header, Image, Segment, Popup } from "semantic-ui-react";
 
 const RecipeViewLikes = ({ likedBy }) => {
@@ -12,7 +13,7 @@ const RecipeViewLikes = ({ likedBy }) => {
               <Popup
                 content={user.nick}
                 key={user.id}
-                trigger={<Image key={user.id} src={user.pictureURL} />}
+                trigger={<Image key={user.id} src={user.pictureURL} as={Link} to={`/uzytkownik/${user.id}`}/>}
               />
             ))}
         </Image.Group>
