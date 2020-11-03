@@ -5,6 +5,8 @@ import { compose } from "redux";
 import { Grid } from "semantic-ui-react";
 import ProfileInfo from "./ProfileInfo";
 import UserPhotos from "./UserPhotos";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+
 
 const userDataFetch = ({ userId }) => {
   return [
@@ -29,12 +31,18 @@ const mapStateToProps = (state, ownProps) => {
     userId,
     profile: state.firestore.ordered.userProfile,
     photos: state.firestore.ordered.userPhotos,
+    requesting: state.firestore.status.requesting
   };
 };
 
 class UserViewPage extends Component {
   render() {
-    const { profile, photos } = this.props;
+    const { profile, photos, requesting } = this.props;
+    const loading = Object.values(requesting).some(x => x ===true);
+
+    if (loading) {
+      return <LoadingComponent />;
+    }
 
     return (
       <Grid>

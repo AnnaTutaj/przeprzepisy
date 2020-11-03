@@ -9,9 +9,9 @@ import {
   Loader,
 } from "semantic-ui-react";
 import moment from "moment";
+import LazyLoad from "react-lazyload";
 
 class ProfileInfo extends Component {
-
   render() {
     const { profile } = this.props;
 
@@ -43,7 +43,19 @@ class ProfileInfo extends Component {
     // todo tłumaczenia ulubionych kategorii, teraz są keys pokazywane
     return (
       <Card>
-        <Image src={profile[0].pictureURL || '/assets/dummyUser.png'} wrapped ui={false} />
+        <LazyLoad
+          height={260}
+          placeholder={
+            <Image className='ui card' src='/assets/dummyUser.png' wrapped ui={false} />
+          }
+        >
+          <Image
+            className='ui card'
+            src={profile[0].pictureURL || "/assets/dummyUser.png"}
+            wrapped
+            ui={false}
+          />
+        </LazyLoad>
         <Card.Content>
           {genderIconName && (
             <Icon className='right floated' name={genderIconName}></Icon>

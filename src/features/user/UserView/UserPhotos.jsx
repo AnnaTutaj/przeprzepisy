@@ -8,6 +8,7 @@ import {
   Loader,
   Segment,
 } from "semantic-ui-react";
+import LazyLoad from "react-lazyload";
 
 const UserPhotos = ({ photos }) => {
   if (!photos) {
@@ -26,7 +27,9 @@ const UserPhotos = ({ photos }) => {
           <Card.Group itemsPerRow={4}>
             {photos.map((photo) => (
               <Card key={photo.id}>
-                <Image src={photo.url} />
+                <LazyLoad height={190} placeholder={<Image src='/assets/dummyImage.png' />}>
+                  <Image src={photo.url} />
+                </LazyLoad>
               </Card>
             ))}
           </Card.Group>
@@ -37,7 +40,11 @@ const UserPhotos = ({ photos }) => {
             <Icon name='picture' />
             <Header.Content>Zdjęcia użytkownika</Header.Content>
           </Header>
-          <Header as='h4' textAlign='center' content='Użytkownik nie dodał żadnych zdjęć'></Header>
+          <Header
+            as='h4'
+            textAlign='center'
+            content='Użytkownik nie dodał żadnych zdjęć'
+          ></Header>
         </Segment>
       )}
     </React.Fragment>

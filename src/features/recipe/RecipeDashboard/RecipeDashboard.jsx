@@ -5,18 +5,17 @@ import { connect } from "react-redux";
 import RecipeList from "../RecipeList/RecipeList";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import RecipeNewest from "../RecipeNewest/RecipeNewest";
-import { firestoreConnect } from "react-redux-firebase";
+import { firestoreConnect, isLoaded } from "react-redux-firebase";
 
 const mapStateToProps = (state) => ({
   recipes: state.firestore.ordered.recipes,
-  loading: state.async.loading,
 });
 
 class RecipeDashboard extends Component {
   render() {
-    const { recipes, loading } = this.props;
+    const { recipes } = this.props;
 
-    if (loading) {
+    if (!isLoaded(recipes)) {
       return <LoadingComponent />;
     }
 
