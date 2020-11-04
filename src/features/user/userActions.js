@@ -96,14 +96,15 @@ export const addFavRecipe = (recipe) =>
 
         const likedBy = {
             createdAt: firestore.FieldValue.serverTimestamp(),
-            pictureURL: profile.pictureURL,
+            pictureURL: profile.pictureURL || 'assets/dummyUser.png',
             nick: profile.nick,
             createdByUser: false
         }
 
         try {
             await firestore.update(`recipes/${recipe.id}`, {
-                [`likedBy.${user.uid}`]: likedBy
+                [`likedBy.${user.uid}`]: likedBy,
+                likedByCount: firestore.FieldValue.increment(1)
             })
             await firestore.set(`recipe_likes/${recipe.id}_${user.uid}`, {
                 recipeId: recipe.id,
@@ -125,7 +126,9 @@ export const removeFavRecipe = (recipe) =>
         const user = firebase.auth().currentUser;
         try {
             await firestore.update(`recipes/${recipe.id}`, {
-                [`likedBy.${user.uid}`]: firestore.FieldValue.delete()
+                [`likedBy.${user.uid}`]: firestore.FieldValue.delete(),
+                likedByCount: firestore.FieldValue.increment(-1)
+
             });
             await firestore.delete(`recipe_likes/${recipe.id}_${user.uid}`);
             toastr.success("Sukces", "Przepis został usunięty z ulubionych");

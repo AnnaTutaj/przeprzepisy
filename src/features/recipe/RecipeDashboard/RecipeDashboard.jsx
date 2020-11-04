@@ -4,18 +4,30 @@ import { connect } from "react-redux";
 
 import RecipeList from "../RecipeList/RecipeList";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
-import RecipeNewest from "../RecipeNewest/RecipeNewest";
-import { firestoreConnect, isLoaded } from "react-redux-firebase";
+import { firestoreConnect } from "react-redux-firebase";
+import { getLatestRecipes, getMostLikedRecipes } from "../recipeActions";
 
 const mapStateToProps = (state) => ({
-  recipes: state.firestore.ordered.recipes,
+  latestRecipes: state.recipes.latestRecipes,
+  mostLikedRecipes: state.recipes.mostLikedRecipes,
+  loading: state.async.loading,
 });
 
-class RecipeDashboard extends Component {
-  render() {
-    const { recipes } = this.props;
+const mapStateToDispatch = {
+  getLatestRecipes,
+  getMostLikedRecipes,
+};
 
-    if (!isLoaded(recipes)) {
+class RecipeDashboard extends Component {
+  componentDidMount() {
+    this.props.getLatestRecipes();
+    this.props.getMostLikedRecipes();
+  }
+
+  render() {
+    const { latestRecipes, mostLikedRecipes, loading } = this.props;
+
+    if (loading) {
       return <LoadingComponent />;
     }
 
@@ -23,7 +35,10 @@ class RecipeDashboard extends Component {
       <>
         <Grid>
           <Grid.Row>
-            <RecipeList recipes={recipes} />
+            <RecipeList
+              recipes={mostLikedRecipes}
+              headerText='Popularne przepisy'
+            />
           </Grid.Row>
           <Grid.Row>
             <Grid.Column>
@@ -34,7 +49,7 @@ class RecipeDashboard extends Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <RecipeNewest />
+            <RecipeList recipes={latestRecipes} headerText='Ostatnio dodane' />
           </Grid.Row>
         </Grid>
       </>
@@ -42,6 +57,7 @@ class RecipeDashboard extends Component {
   }
 }
 
-export default connect(mapStateToProps)(
-  firestoreConnect([{ collection: "recipes" }])(RecipeDashboard)
-);
+export default connect(
+  mapStateToProps,
+  mapStateToDispatch
+)(firestoreConnect([{ collection: "recipes" }])(RecipeDashboard));

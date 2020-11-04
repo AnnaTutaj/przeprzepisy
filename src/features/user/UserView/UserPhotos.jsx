@@ -13,9 +13,11 @@ import LazyLoad from "react-lazyload";
 const UserPhotos = ({ photos }) => {
   if (!photos) {
     return (
-      <Dimmer inverted active={true}>
-        <Loader size='large' />
-      </Dimmer>
+      <Segment style={{ height: "200px" }}>
+        <Dimmer inverted active={true}>
+          <Loader size='large' />
+        </Dimmer>
+      </Segment>
     );
   }
 
@@ -27,7 +29,10 @@ const UserPhotos = ({ photos }) => {
           <Card.Group itemsPerRow={4}>
             {photos.map((photo) => (
               <Card key={photo.id}>
-                <LazyLoad height={190} placeholder={<Image src='/assets/dummyImage.png' />}>
+                <LazyLoad
+                  height={190}
+                  placeholder={<Image src='/assets/dummyImage.png' />}
+                >
                   <Image src={photo.url} />
                 </LazyLoad>
               </Card>

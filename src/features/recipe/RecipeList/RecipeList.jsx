@@ -3,13 +3,18 @@ import RecipeListItem from "./RecipeListItem";
 import { Grid, Header } from "semantic-ui-react";
 
 class RecipeList extends Component {
+  static defaultProps = {
+    headerSize: "h2",
+  };
+
   render() {
-    const { recipes } = this.props;
+    const { recipes, headerText, headerSize } = this.props;
+
     return (
       <>
         <Grid>
           <Grid.Column width={16}>
-            <Header as='h2'>W tym tygodniu polecamy</Header>
+            <Header as={headerSize}>{headerText}</Header>
           </Grid.Column>
           {recipes &&
             recipes.map((recipe) => (

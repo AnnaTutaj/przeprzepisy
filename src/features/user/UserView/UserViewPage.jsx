@@ -6,7 +6,8 @@ import { Grid } from "semantic-ui-react";
 import ProfileInfo from "./ProfileInfo";
 import UserPhotos from "./UserPhotos";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
-
+import UserRecipes from "./UserRecipes";
+import { getUserRecipes, clearUserRecipes } from "../../recipe/recipeActions";
 
 const userDataFetch = ({ userId }) => {
   return [
@@ -31,16 +32,64 @@ const mapStateToProps = (state, ownProps) => {
     userId,
     profile: state.firestore.ordered.userProfile,
     photos: state.firestore.ordered.userPhotos,
-    requesting: state.firestore.status.requesting
+    requesting: state.firestore.status.requesting,
+    recipes: state.recipes.userRecipes,
+    loading: state.async.loading,
   };
 };
 
-class UserViewPage extends Component {
-  render() {
-    const { profile, photos, requesting } = this.props;
-    const loading = Object.values(requesting).some(x => x ===true);
+const mapDispatchToProps = {
+  getUserRecipes,
+  clearUserRecipes,
+};
 
-    if (loading) {
+class UserViewPage extends Component {
+  state = {
+    moreRecipes: false,
+    loadingInitial: true,
+    loadedRecipes: [],
+  };
+
+  getNextRecipes = async () => {
+    const { recipes, userId } = this.props;
+    let lastFetchedRecipe =
+      recipes && recipes.length && recipes[recipes.length - 1];
+    let next = await this.props.getUserRecipes(userId, lastFetchedRecipe);
+    if (next && next.docs && next.docs.length <= 1) {
+      this.setState({
+        moreRecipes: false,
+      });
+    }
+  };
+
+  async componentDidMount() {
+    let next = await this.props.getUserRecipes(this.props.userId);
+
+    if (next && next.docs && next.docs.length > 1) {
+      this.setState({
+        moreRecipes: true,
+        loadingInitial: false,
+      });
+    }
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if (this.props.recipes !== prevProps.recipes) {
+      this.setState({
+        loadedRecipes: [...this.state.loadedRecipes, ...this.props.recipes],
+      });
+    }
+  };
+
+  async componentWillUnmount() {
+    this.props.clearUserRecipes();
+  }
+
+  render() {
+    const { profile, photos, loading } = this.props;
+    const { moreRecipes, loadedRecipes } = this.state;
+
+    if (this.state.loadingInitial) {
       return <LoadingComponent />;
     }
 
@@ -51,6 +100,12 @@ class UserViewPage extends Component {
         </Grid.Column>
         <Grid.Column width={12}>
           <UserPhotos photos={photos} />
+          <UserRecipes
+            recipes={loadedRecipes}
+            moreRecipes={moreRecipes}
+            getNextRecipes={this.getNextRecipes}
+            loading={loading}
+          />
         </Grid.Column>
       </Grid>
     );
@@ -58,6 +113,6 @@ class UserViewPage extends Component {
 }
 
 export default compose(
-  connect(mapStateToProps),
+  connect(mapStateToProps, mapDispatchToProps),
   firestoreConnect((userId) => userDataFetch(userId))
 )(UserViewPage);

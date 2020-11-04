@@ -1,4 +1,4 @@
-import { ASYNC_ACTION_FERROR, ASYNC_ACTION_FINISH, ASYNC_ACTION_START } from "./asyncConstants"
+import { ASYNC_ACTION_EERROR, ASYNC_ACTION_FINISH, ASYNC_ACTION_START } from "./asyncConstants"
 
 export const asyncActionStart = () => {
     return {
@@ -14,6 +14,6 @@ export const asyncActionFinish = () => {
 
 export const asyncActionError = () => {
     return {
-        type: ASYNC_ACTION_FERROR
+        type: ASYNC_ACTION_EERROR
     }
 }

@@ -11,6 +11,7 @@ export const createNewRecipe = (user, profile, recipe) => {
         createdBy: profile.nick,
         createdByPictureURL: profile.pictureURL || 'assets/dummyUser.png',
         createdAt: new Date(),
-        likedBy: {}
+        likedBy: {},
+        likedByCount: 0
     }
 }
