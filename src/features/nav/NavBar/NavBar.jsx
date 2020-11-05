@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withFirebase } from "react-redux-firebase";
-import { Menu, Button, Container } from "semantic-ui-react";
+import { Menu, Button, Container, Icon } from "semantic-ui-react";
 import { NavLink, Link, withRouter } from "react-router-dom";
 import SignedOutMenu from "./Menus/SignedOutMenu";
 import SignedInMenu from "./Menus/SignedInMenu";
@@ -56,6 +56,11 @@ class NavBar extends Component {
               content='Użytkownicy'
             />
           )}
+          {authenticated && (
+            <Menu.Item position='right' as={Link} to='/ulubione-przepisy'>
+              <Icon link name='heart' />
+            </Menu.Item>
+          )}
           {authenticated ? (
             <SignedInMenu
               signOut={this.handleSignOut}
@@ -79,4 +84,6 @@ class NavBar extends Component {
   }
 }
 
-export default withRouter(withFirebase(connect(mapStateToProps, mapDispatchToProps)(NavBar)));
+export default withRouter(
+  withFirebase(connect(mapStateToProps, mapDispatchToProps)(NavBar))
+);

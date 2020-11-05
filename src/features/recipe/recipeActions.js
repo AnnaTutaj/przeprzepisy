@@ -1,7 +1,7 @@
 import firebase from '../../app/config/firebase';
 import { toastr } from "react-redux-toastr"
 import { createNewRecipe } from "../../app/common/util/helpers"
-import { FETCH_LATEST_RECIPES, FETCH_MOST_LIKED_RECIPES, FETCH_USER_RECIPES } from './recipeConstants';
+import { FETCH_LATEST_RECIPES, FETCH_MOST_LIKED_RECIPES, FETCH_USER_RECIPES, FETCH_USER_FAV_RECIPES, FETCH_RECIPE_LIKES } from './recipeConstants';
 import { asyncActionError, asyncActionFinish, asyncActionStart } from '../async/asyncActions';
 
 export const createRecipe = (recipe) => {
@@ -143,7 +143,48 @@ export const clearUserRecipes = () =>
         dispatch({ type: FETCH_USER_RECIPES, payload: [] });
     }
 
+export const getUserFavRecipes = (lastFetchedRecipeLike) =>
+    async (dispatch, getState) => {
+        const firestore = firebase.firestore();
+        let recipesRef = firestore.collection('recipe_likes');
+        const user = firebase.auth().currentUser;
 
+        try {
+            dispatch(asyncActionStart());
+            let startAfter = lastFetchedRecipeLike && await firestore.collection('recipe_likes').doc(lastFetchedRecipeLike.id).get();
+            let query = lastFetchedRecipeLike ? recipesRef.where('userUid', '==', user.uid).orderBy('createdAt', 'desc').startAfter(startAfter).limit(4) : recipesRef.where('userUid', '==', user.uid).orderBy('createdAt', 'desc').limit(4);
 
+            let querySnap = await query.get();
 
+            if (querySnap.docs.length === 0) {
+                dispatch(asyncActionFinish());
+                return querySnap;
+            }
 
+            let userRecipes = [];
+            let recipeLikes = [];
+
+            for (let i = 0; i < querySnap.docs.length; i++) {
+                let recipeLike = { ...querySnap.docs[i].data(), id: querySnap.docs[i].id };
+                recipeLikes.push(recipeLike);
+
+                let recipe = await firestore.collection('recipes').doc(querySnap.docs[i].data().recipeId).get();
+                userRecipes.push({ ...recipe.data(), id: recipe.id });
+            }
+            dispatch({ type: FETCH_USER_FAV_RECIPES, payload: userRecipes });
+            dispatch({ type: FETCH_RECIPE_LIKES, payload: recipeLikes });
+
+            dispatch(asyncActionFinish());
+            return querySnap;
+        } catch (error) {
+            console.log(error);
+            dispatch(asyncActionError());
+        }
+
+    }
+
+export const clearUserFavRecipes = () =>
+    async (dispatch) => {
+        dispatch({ type: FETCH_RECIPE_LIKES, payload: [] });
+        dispatch({ type: FETCH_USER_FAV_RECIPES, payload: [] });
+    }

@@ -7,7 +7,7 @@ const SignedInMenu = ({signOut, profile, auth}) => {
   const trigger = <Image avatar src={profile.pictureURL || '/assets/dummyUser.png'} />;
 
   return (
-    <Menu.Item position='right'>
+    <Menu.Item >
       <Dropdown pointing='top left' trigger={trigger}>
         <Dropdown.Menu>
           <Dropdown.Header content={`Profil ${profile.nick}`} />

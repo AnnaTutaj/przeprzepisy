@@ -109,7 +109,7 @@ export const addFavRecipe = (recipe) =>
             await firestore.set(`recipe_likes/${recipe.id}_${user.uid}`, {
                 recipeId: recipe.id,
                 userUid: user.uid,
-                createdByUser: false
+                createdAt: firestore.FieldValue.serverTimestamp()
             });
             toastr.success("Sukces", "Przepis został dodany do ulubionych");
         } catch (error) {

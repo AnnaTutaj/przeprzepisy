@@ -10,6 +10,7 @@ import UserViewPage from "../../features/user/UserView/UserViewPage";
 import SettingsDashboard from "../../features/user/Settings/SettingsDashboard";
 import RecipeForm from "../../features/recipe/RecipeForm/RecipeForm";
 import ModalManager from "../../features/modals/ModalManager";
+import RecipeFavorites from "../../features/recipe/RecipeFavorites/RecipeFavorites";
 
 class App extends Component {
   render() {
@@ -29,6 +30,7 @@ class App extends Component {
                   <Route path='/uzytkownicy' component={PeopleDashboard} />
                   <Route path='/uzytkownik/:id' component={UserViewPage} />
                   <Route path='/ustawienia' component={SettingsDashboard} />
+                  <Route path='/ulubione-przepisy' component={RecipeFavorites } />
                   <Route
                     path={["/dodaj-przepis", "/edytuj-przepis/:id"]}
                     component={RecipeForm}
