@@ -1,10 +1,22 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { compose } from "redux";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 
-import { Segment, Image, List, Header } from "semantic-ui-react";
+import { Segment, Image, List, Header, Icon } from "semantic-ui-react";
 import RecipeLikes from "./RecipeLikes";
 import { objectToArray } from "../../../app/common/util/helpers";
+import { addFavRecipe, removeFavRecipe } from "../../user/userActions";
+
+const mapStateToProps = (state) => ({
+  auth: state.firebase.auth,
+});
+
+const mapDispatchToProps = {
+  addFavRecipe,
+  removeFavRecipe,
+};
 
 class RecipeListItem extends Component {
   goToRecipe = (recipeId) => {
@@ -12,8 +24,9 @@ class RecipeListItem extends Component {
   };
 
   render() {
-    const { recipe } = this.props;
+    const { recipe, auth, addFavRecipe, removeFavRecipe } = this.props;
     const likedBy = recipe && recipe.likedBy && objectToArray(recipe.likedBy);
+    const isLiked = likedBy.some((x) => x.id === auth.uid);
 
     return (
       <Segment.Group>
@@ -40,6 +53,22 @@ class RecipeListItem extends Component {
           <div>{recipe.description}</div>
         </Segment>
         <Segment>
+          {/* //todo odswiezac widok aktualnego elementu, zeby avatary sie uaktualnily, 
+          dodac rules przy lajkowaniu (dodac mozna niepolubione i nie swoje, a usuwac mozna Adpolubione) */}
+          {isLiked ? (
+            <Icon
+              link
+              name='heart'
+              color='red'
+              onClick={() => removeFavRecipe(recipe)}
+            />
+          ) : (
+            <Icon
+              link
+              name='heart outline'
+              onClick={() => addFavRecipe(recipe)}
+            />
+          )}
           <List horizontal>
             {likedBy &&
               likedBy.map((l) => <RecipeLikes key={l.id} likedBy={l} />)}
@@ -50,4 +79,7 @@ class RecipeListItem extends Component {
   }
 }
 
-export default withRouter(RecipeListItem);
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withRouter
+)(RecipeListItem);

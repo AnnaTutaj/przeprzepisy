@@ -94,6 +94,11 @@ export const addFavRecipe = (recipe) =>
         const user = firebase.auth().currentUser;
         const profile = getState().firebase.profile;
 
+        if (!user) {
+            toastr.warning("Jesteś nowy?", "Zaloguj się, żeby móc polubić przepis");
+            return;
+        }
+
         const likedBy = {
             createdAt: firestore.FieldValue.serverTimestamp(),
             pictureURL: profile.pictureURL || '',
@@ -124,6 +129,12 @@ export const removeFavRecipe = (recipe) =>
         const firebase = getFirebase();
         const firestore = getFirestore();
         const user = firebase.auth().currentUser;
+
+        if (!user) {
+            toastr.warning("Ooops", "Coś poszło nie tak");
+            return;
+        }
+
         try {
             await firestore.update(`recipes/${recipe.id}`, {
                 [`likedBy.${user.uid}`]: firestore.FieldValue.delete(),
