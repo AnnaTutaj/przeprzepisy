@@ -9,7 +9,7 @@ export const createNewRecipe = (user, profile, recipe) => {
         ...recipe,
         createdByUid: user.uid,
         createdBy: profile.nick,
-        createdByPictureURL: profile.pictureURL || 'assets/dummyUser.png',
+        createdByPictureURL: profile.pictureURL || '',
         createdAt: new Date(),
         likedBy: {},
         likedByCount: 0

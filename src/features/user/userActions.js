@@ -96,7 +96,7 @@ export const addFavRecipe = (recipe) =>
 
         const likedBy = {
             createdAt: firestore.FieldValue.serverTimestamp(),
-            pictureURL: profile.pictureURL || 'assets/dummyUser.png',
+            pictureURL: profile.pictureURL || '',
             nick: profile.nick,
             createdByUser: false
         }

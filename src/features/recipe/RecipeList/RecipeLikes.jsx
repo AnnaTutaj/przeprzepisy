@@ -15,7 +15,7 @@ class RecipeLikes extends Component {
               key={likedBy.id}
               size='mini'
               circular
-              src={likedBy.pictureURL}
+              src={likedBy.pictureURL || "/assets/dummyUser.png"}
               as={Link}
               to={`/uzytkownik/${likedBy.id}`}
             />

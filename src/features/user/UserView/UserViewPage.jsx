@@ -64,13 +64,10 @@ class UserViewPage extends Component {
 
   async componentDidMount() {
     let next = await this.props.getUserRecipes(this.props.userId);
-
-    if (next && next.docs && next.docs.length > 1) {
-      this.setState({
-        moreRecipes: true,
-        loadingInitial: false,
-      });
-    }
+    this.setState({
+      moreRecipes: next && next.docs && next.docs.length > 1,
+      loadingInitial: false,
+    });
   }
 
   componentDidUpdate = (prevProps) => {
