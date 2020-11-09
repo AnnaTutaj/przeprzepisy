@@ -1,6 +1,5 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { Comment, Header, Segment } from "semantic-ui-react";
-import { Link } from "react-router-dom";
 import RecipeViewChatForm from "./RecipeViewChatForm";
 import ReceipeViewCommentItem from "./ReceipeViewCommentItem";
 
