@@ -1,14 +1,19 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { compose } from "redux";
 import { Grid } from "semantic-ui-react";
 import RecipeViewComments from "./RecipeViewComments";
 import RecipeViewDescription from "./RecipeViewDescription";
 import RecipeViewHeader from "./RecipeViewHeader";
 import RecipeViewIngredients from "./RecipeViewIngredients";
 import RecipeViewLikes from "./RecipeViewLikes";
-import { deleteRecipe, hideRecipeToggle } from "../recipeActions";
-import { withFirestore } from "react-redux-firebase";
-import { objectToArray } from "../../../app/common/util/helpers";
+import {
+  deleteRecipe,
+  hideRecipeToggle,
+  addRecipeComment,
+} from "../recipeActions";
+import { withFirestore, firebaseConnect, isEmpty } from "react-redux-firebase";
+import { objectToArray, createDataTree } from "../../../app/common/util/helpers";
 import { addFavRecipe, removeFavRecipe } from "../../user/userActions";
 
 const mapStateToProps = (state, ownProps) => {
@@ -29,6 +34,9 @@ const mapStateToProps = (state, ownProps) => {
   return {
     recipe,
     auth: state.firebase.auth,
+    recipeChat:
+      !isEmpty(state.firebase.data.recipe_chat) &&
+      objectToArray(state.firebase.data.recipe_chat[recipeId]),
   };
 };
 
@@ -36,13 +44,14 @@ const mapDispatchToProps = {
   deleteRecipe,
   hideRecipeToggle,
   addFavRecipe,
-  removeFavRecipe
- };
+  removeFavRecipe,
+  addRecipeComment,
+};
 
 class RecipeViewPage extends Component {
   async componentDidMount() {
     const { firestore, match } = this.props;
-     await firestore.setListener(`recipes/${match.params.id}`);
+    await firestore.setListener(`recipes/${match.params.id}`);
   }
 
   async componentWillUnmount() {
@@ -61,8 +70,16 @@ class RecipeViewPage extends Component {
   };
 
   render() {
-    const { recipe, auth, addFavRecipe, removeFavRecipe } = this.props;
+    const {
+      recipe,
+      auth,
+      addFavRecipe,
+      removeFavRecipe,
+      addRecipeComment,
+      recipeChat,
+    } = this.props;
     const likedBy = recipe && recipe.likedBy && objectToArray(recipe.likedBy);
+    const chatTree = !isEmpty(recipeChat) && createDataTree(recipeChat);
 
     return (
       <div>
@@ -88,7 +105,11 @@ class RecipeViewPage extends Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column mobile={16} computer={8}>
-              <RecipeViewComments />
+              <RecipeViewComments
+                addRecipeComment={addRecipeComment}
+                recipeId={recipe.id}
+                recipeChat={chatTree}
+              />
             </Grid.Column>
             <Grid.Column mobile={16} computer={8}>
               <RecipeViewLikes likedBy={likedBy} />
@@ -100,6 +121,8 @@ class RecipeViewPage extends Component {
   }
 }
 
-export default withFirestore(
-  connect(mapStateToProps, mapDispatchToProps)(RecipeViewPage)
-);
+export default compose(
+  withFirestore,
+  connect(mapStateToProps, mapDispatchToProps),
+  firebaseConnect((props) => [`recipe_chat/${props.match.params.id}`])
+)(RecipeViewPage);

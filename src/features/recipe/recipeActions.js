@@ -188,3 +188,24 @@ export const clearUserFavRecipes = () =>
         dispatch({ type: FETCH_RECIPE_LIKES, payload: [] });
         dispatch({ type: FETCH_USER_FAV_RECIPES, payload: [] });
     }
+
+export const addRecipeComment = (recipeId, values, parentId) =>
+    async (dispatch, getState, { getFirebase }) => {
+        const firebase = getFirebase();
+        const profile = getState().firebase.profile;
+        const user = firebase.auth().currentUser;
+        let newComment = {
+            parentId: parentId,
+            createdByNick: profile.nick,
+            createdByPictureURL: profile.pictureURL || '',
+            createdByUid: user.uid,
+            text: values.comment,
+            createdAt: Date.now()
+        }
+        try {
+            await firebase.push(`recipe_chat/${recipeId}`, newComment)
+        } catch (error) {
+            console.log(error);
+            toastr.error('Oops', 'Nie udało się dodać komentarza');
+        }
+    }
