@@ -1,6 +1,7 @@
 import { toastr } from "react-redux-toastr";
 import cuid from "cuid";
 import { asyncActionError, asyncActionFinish, asyncActionStart } from "../async/asyncActions";
+import firebase from '../../app/config/firebase';
 
 export const updateProfile = (user) => {
     return async (dispatch, getState, { getFirebase }) => {
@@ -32,15 +33,8 @@ export const uploadProfileImage = (file, fileName) =>
             dispatch(asyncActionStart());
             let uploadedFile = await firebase.uploadFile(path, file, null, options);
             let downloadURL = await uploadedFile.uploadTaskSnapshot.ref.getDownloadURL();
-            let userDoc = await firestore.get(`users/${user.uid}`);
-            if (!userDoc.data().pictureURL) {
-                await firebase.updateProfile({
-                    pictureURL: downloadURL
-                });
-                await user.updateProfile({
-                    pictureURL: downloadURL
-                })
-            }
+            //todo przemyslec, czy ustawiac automatycznie zdjecie profilowe, gdy zdjecie jest dodane jako pierwsze
+    
             await firestore.add({
                 collection: 'users',
                 doc: user.uid,
@@ -76,13 +70,44 @@ export const deletePhoto = (photo) =>
     }
 
 export const setProfilePhoto = (photo) =>
-    async (dispatch, getState, { getFirebase }) => {
-        const firebase = getFirebase();
+    async (dispatch, getState) => {
+        const firestore = firebase.firestore();
+        const user = firebase.auth().currentUser;
+        let userDocRef = firestore.collection('users').doc(user.uid);
+        let recipesCreatedByUserRef = firestore.collection('recipes');
+        let recipesLikesRef = firestore.collection('recipe_likes');
+
         try {
-            return await firebase.updateProfile({
+            dispatch(asyncActionStart());
+            let batch = firestore.batch();
+            batch.update(userDocRef, {
                 pictureURL: photo.url
             });
+
+            let recipesCreatedByUserQuery = recipesCreatedByUserRef.where('createdByUid', '==', user.uid);
+            let recipesCreatedByUserSnap = await recipesCreatedByUserQuery.get();
+
+            for (let i = 0; i < recipesCreatedByUserSnap.docs.length; i++) {
+                let recipeRef = firestore.collection('recipes').doc(recipesCreatedByUserSnap.docs[i].id);
+                batch.update(recipeRef, {
+                    createdByPictureURL: photo.url
+                })
+            }
+
+            let recipesLikesQuery = recipesLikesRef.where('userUid', '==', user.uid);
+            let recipesLikesSnap = await recipesLikesQuery.get();
+
+            for (let i = 0; i < recipesLikesSnap.docs.length; i++) {
+                let recipeRef = firestore.collection('recipes').doc(recipesLikesSnap.docs[i].data().recipeId);
+                batch.update(recipeRef, {
+                    [`likedBy.${user.uid}.pictureURL`]: photo.url
+                })
+            }
+
+            await batch.commit();
+            dispatch(asyncActionFinish())
         } catch (error) {
+            console.log(error);
             throw new Error('Nie udało się ustawić zdjęcia profilowego')
         }
     }
