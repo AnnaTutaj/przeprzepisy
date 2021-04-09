@@ -194,6 +194,12 @@ export const addRecipeComment = (recipeId, values, parentId) =>
         const firebase = getFirebase();
         const profile = getState().firebase.profile;
         const user = firebase.auth().currentUser;
+
+        if (!user) {
+            toastr.warning("Jesteś nowy?", "Zaloguj się, żeby móc skomentować przepis");
+            return;
+        }
+
         let newComment = {
             parentId: parentId,
             createdByNick: profile.nick,
