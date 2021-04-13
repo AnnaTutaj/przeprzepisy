@@ -22,6 +22,8 @@ class RecipeViewHeader extends Component {
       likedBy,
       addFavRecipe,
       removeFavRecipe,
+      authenticated,
+      openModal
     } = this.props;
     const isCreatedByCurrentUser = recipe.createdByUid === auth.uid;
     const isLikedByCurrentUser =
@@ -93,7 +95,7 @@ class RecipeViewHeader extends Component {
                     basic
                     color='red'
                     type='button'
-                    onClick={() => addFavRecipe(recipe)}
+                    onClick={() => authenticated ? addFavRecipe(recipe) : openModal('UnauthModal')}
                   >
                     <Icon name='heart' />
                     Dodaj do ulubionych

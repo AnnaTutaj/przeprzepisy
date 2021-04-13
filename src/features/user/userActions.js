@@ -119,11 +119,6 @@ export const addFavRecipe = (recipe) =>
         const user = firebase.auth().currentUser;
         const profile = getState().firebase.profile;
 
-        if (!user) {
-            toastr.warning("Jesteś nowy?", "Zaloguj się, żeby móc polubić przepis");
-            return;
-        }
-
         const likedBy = {
             createdAt: firestore.FieldValue.serverTimestamp(),
             pictureURL: profile.pictureURL || '',

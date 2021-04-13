@@ -8,6 +8,7 @@ import { Segment, Image, List, Header, Icon } from "semantic-ui-react";
 import RecipeLikes from "./RecipeLikes";
 import { objectToArray } from "../../../app/common/util/helpers";
 import { addFavRecipe, removeFavRecipe } from "../../user/userActions";
+import { openModal } from "../../modals/modalActions";
 
 const mapStateToProps = (state) => ({
   auth: state.firebase.auth,
@@ -16,6 +17,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   addFavRecipe,
   removeFavRecipe,
+  openModal,
 };
 
 class RecipeListItem extends Component {
@@ -24,9 +26,16 @@ class RecipeListItem extends Component {
   };
 
   render() {
-    const { recipe, auth, addFavRecipe, removeFavRecipe } = this.props;
+    const {
+      recipe,
+      auth,
+      addFavRecipe,
+      removeFavRecipe,
+      openModal,
+    } = this.props;
     const likedBy = recipe && recipe.likedBy && objectToArray(recipe.likedBy);
     const isLiked = likedBy.some((x) => x.id === auth.uid);
+    const authenticated = auth.isLoaded && !auth.isEmpty;
 
     return (
       <Segment.Group>
@@ -66,7 +75,9 @@ class RecipeListItem extends Component {
             <Icon
               link
               name='heart outline'
-              onClick={() => addFavRecipe(recipe)}
+              onClick={() =>
+                authenticated ? addFavRecipe(recipe) : openModal("UnauthModal")
+              }
             />
           )}
           <List horizontal>

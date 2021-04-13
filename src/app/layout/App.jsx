@@ -11,7 +11,7 @@ import SettingsDashboard from "../../features/user/Settings/SettingsDashboard";
 import RecipeForm from "../../features/recipe/RecipeForm/RecipeForm";
 import ModalManager from "../../features/modals/ModalManager";
 import RecipeFavorites from "../../features/recipe/RecipeFavorites/RecipeFavorites";
-
+import { UserIsAuthenticated } from "../../features/auth/authWrapper";
 class App extends Component {
   render() {
     return (
@@ -27,13 +27,25 @@ class App extends Component {
                 <Switch key={this.props.location.key}>
                   <Route exact path='/przepisy' component={RecipeDashboard} />
                   <Route path='/przepisy/:id' component={RecipeViewPage} />
-                  <Route path='/uzytkownicy' component={PeopleDashboard} />
-                  <Route path='/uzytkownik/:id' component={UserViewPage} />
-                  <Route path='/ustawienia' component={SettingsDashboard} />
-                  <Route path='/ulubione-przepisy' component={RecipeFavorites } />
+                  <Route
+                    path='/uzytkownicy'
+                    component={UserIsAuthenticated(PeopleDashboard)}
+                  />
+                  <Route
+                    path='/uzytkownik/:id'
+                    component={UserIsAuthenticated(UserViewPage)}
+                  />
+                  <Route
+                    path='/ustawienia'
+                    component={UserIsAuthenticated(SettingsDashboard)}
+                  />
+                  <Route
+                    path='/ulubione-przepisy'
+                    component={UserIsAuthenticated(RecipeFavorites)}
+                  />
                   <Route
                     path={["/dodaj-przepis", "/edytuj-przepis/:id"]}
-                    component={RecipeForm}
+                    component={UserIsAuthenticated(RecipeForm)}
                   />
                 </Switch>
               </Container>

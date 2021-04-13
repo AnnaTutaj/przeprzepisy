@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { Grid } from "semantic-ui-react";
+import { Button, Grid, Header, Segment } from "semantic-ui-react";
 import RecipeViewComments from "./RecipeViewComments";
 import RecipeViewDescription from "./RecipeViewDescription";
 import RecipeViewHeader from "./RecipeViewHeader";
@@ -13,8 +13,12 @@ import {
   addRecipeComment,
 } from "../recipeActions";
 import { withFirestore, firebaseConnect, isEmpty } from "react-redux-firebase";
-import { objectToArray, createDataTree } from "../../../app/common/util/helpers";
+import {
+  objectToArray,
+  createDataTree,
+} from "../../../app/common/util/helpers";
 import { addFavRecipe, removeFavRecipe } from "../../user/userActions";
+import { openModal } from "../../modals/modalActions";
 
 const mapStateToProps = (state, ownProps) => {
   const recipeId = ownProps.match.params.id;
@@ -46,6 +50,7 @@ const mapDispatchToProps = {
   addFavRecipe,
   removeFavRecipe,
   addRecipeComment,
+  openModal,
 };
 
 class RecipeViewPage extends Component {
@@ -77,9 +82,11 @@ class RecipeViewPage extends Component {
       removeFavRecipe,
       addRecipeComment,
       recipeChat,
+      openModal,
     } = this.props;
     const likedBy = recipe && recipe.likedBy && objectToArray(recipe.likedBy);
     const chatTree = !isEmpty(recipeChat) && createDataTree(recipeChat);
+    const authenticated = auth.isLoaded && !auth.isEmpty;
 
     return (
       <div>
@@ -93,6 +100,8 @@ class RecipeViewPage extends Component {
               likedBy={likedBy}
               addFavRecipe={addFavRecipe}
               removeFavRecipe={removeFavRecipe}
+              authenticated={authenticated}
+              openModal={openModal}
             />
           </Grid.Row>
           <Grid.Row stretched>
@@ -104,13 +113,29 @@ class RecipeViewPage extends Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column mobile={16} computer={8}>
-              <RecipeViewComments
-                addRecipeComment={addRecipeComment}
-                recipeId={recipe.id}
-                recipeChat={chatTree}
-              />
-            </Grid.Column>
+            {authenticated ? (
+              <Grid.Column mobile={16} computer={8}>
+                <RecipeViewComments
+                  addRecipeComment={addRecipeComment}
+                  recipeId={recipe.id}
+                  recipeChat={chatTree}
+                />
+              </Grid.Column>
+            ) : (
+              <Grid.Column mobile={16} computer={8}>
+                <Segment>
+                  <Header as='h3' dividing>
+                    Podziel się swoją opinią
+                  </Header>
+                  <p>
+                    Komentarze widoczne są tylko dla zalogowanych użytkowników.
+                  </p>
+                  <Button primary onClick={openModal("UnauthModal")}>
+                    Dołącz do nas!
+                  </Button>
+                </Segment>
+              </Grid.Column>
+            )}
             <Grid.Column mobile={16} computer={8}>
               <RecipeViewLikes likedBy={likedBy} />
             </Grid.Column>
