@@ -130,7 +130,7 @@ class RecipeViewPage extends Component {
                   <p>
                     Komentarze widoczne są tylko dla zalogowanych użytkowników.
                   </p>
-                  <Button primary onClick={openModal("UnauthModal")}>
+                  <Button primary onClick={() => openModal("UnauthModal")}>
                     Dołącz do nas!
                   </Button>
                 </Segment>
