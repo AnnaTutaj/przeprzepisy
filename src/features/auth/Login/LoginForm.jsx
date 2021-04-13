@@ -11,7 +11,13 @@ const mapDispatchToProps = {
   federatedLogin,
 };
 
-const LoginForm = ({ login, federatedLogin, handleSubmit, error }) => {
+const LoginForm = ({
+  login,
+  federatedLogin,
+  handleSubmit,
+  error,
+  submitting,
+}) => {
   return (
     <>
       <Form size='large' onSubmit={handleSubmit(login)} error>
@@ -28,7 +34,7 @@ const LoginForm = ({ login, federatedLogin, handleSubmit, error }) => {
           placeholder='Hasło'
         />
         {error && <Message error header='' content={error} />}
-        <Button fluid size='large' primary>
+        <Button loading={submitting} fluid size='large' primary>
           Zaloguj się
         </Button>
         <Divider horizontal>albo</Divider>

@@ -12,12 +12,17 @@ export const createRecipe = (recipe) => {
         const profile = getState().firebase.profile;
         const newRecipe = createNewRecipe(user, profile, recipe);
         try {
+            dispatch(asyncActionStart());
             let createdRecipe = await firestore.add('recipes', newRecipe);
             toastr.success('Sukces!', 'Przepis został dodany');
+            dispatch(asyncActionFinish());
             return createdRecipe;
         }
         catch (error) {
+            dispatch(asyncActionStart());
             toastr.error('Oops!', 'Coś poszło nie tak');
+            dispatch(asyncActionFinish());
+
         }
     }
 }
@@ -26,11 +31,17 @@ export const updateRecipe = (recipe) => {
     return async (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore();
         try {
+            dispatch(asyncActionStart());
             await firestore.update(`recipes/${recipe.id}`, recipe);
             toastr.success('Sukces!', 'Przepis został zaktualizowany');
+            dispatch(asyncActionFinish());
+
         }
         catch (error) {
+            dispatch(asyncActionStart());
             toastr.error('Oops!', 'Coś poszło nie tak');
+            dispatch(asyncActionFinish());
+
         }
     }
 }

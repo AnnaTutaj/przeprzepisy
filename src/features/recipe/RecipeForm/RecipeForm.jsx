@@ -154,7 +154,7 @@ class RecipeForm extends Component {
             component={TextAreaInput}
             placeholder='Opis krok po kroku'
           />
-          <Button disabled={submitting} primary type='submit' floated='right'>
+          <Button disabled={submitting} loading={submitting} primary type='submit' floated='right'>
             Zapisz
           </Button>
           <Button type='button' onClick={this.handleCancelForm}>

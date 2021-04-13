@@ -19,6 +19,7 @@ import {
 } from "../../../app/common/util/helpers";
 import { addFavRecipe, removeFavRecipe } from "../../user/userActions";
 import { openModal } from "../../modals/modalActions";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 const mapStateToProps = (state, ownProps) => {
   const recipeId = ownProps.match.params.id;
@@ -38,6 +39,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     recipe,
     auth: state.firebase.auth,
+    requesting: state.firestore.status.requesting,
     recipeChat:
       !isEmpty(state.firebase.data.recipe_chat) &&
       objectToArray(state.firebase.data.recipe_chat[recipeId]),
@@ -83,10 +85,17 @@ class RecipeViewPage extends Component {
       addRecipeComment,
       recipeChat,
       openModal,
+      requesting,
+      match,
     } = this.props;
     const likedBy = recipe && recipe.likedBy && objectToArray(recipe.likedBy);
     const chatTree = !isEmpty(recipeChat) && createDataTree(recipeChat);
     const authenticated = auth.isLoaded && !auth.isEmpty;
+    const loadingRecipe = requesting[`recipes/${match.params.id}`];
+
+    if (loadingRecipe) {
+      return <LoadingComponent />;
+    }
 
     return (
       <div>

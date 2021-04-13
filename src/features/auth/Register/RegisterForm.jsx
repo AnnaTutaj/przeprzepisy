@@ -48,7 +48,13 @@ const RegisterForm = ({
           placeholder='Hasło'
         />
         {error && <Message error header='' content={error} />}
-        <Button disabled={submitting} fluid size='large' primary>
+        <Button
+          disabled={submitting}
+          loading={submitting}
+          fluid
+          size='large'
+          primary
+        >
           Zarejestruj się
         </Button>
         <Divider horizontal>albo</Divider>
