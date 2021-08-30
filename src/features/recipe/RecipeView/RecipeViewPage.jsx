@@ -20,6 +20,7 @@ import {
 import { addFavRecipe, removeFavRecipe } from "../../user/userActions";
 import { openModal } from "../../modals/modalActions";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import NotFound from "../../../app/layout/NotFound";
 
 const mapStateToProps = (state, ownProps) => {
   const recipeId = ownProps.match.params.id;
@@ -95,6 +96,10 @@ class RecipeViewPage extends Component {
 
     if (loadingRecipe) {
       return <LoadingComponent />;
+    }
+
+    if (Object.keys(recipe).length === 0) {
+      return <NotFound />;
     }
 
     return (

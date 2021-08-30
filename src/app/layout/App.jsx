@@ -12,6 +12,8 @@ import RecipeForm from "../../features/recipe/RecipeForm/RecipeForm";
 import ModalManager from "../../features/modals/ModalManager";
 import RecipeFavorites from "../../features/recipe/RecipeFavorites/RecipeFavorites";
 import { UserIsAuthenticated } from "../../features/auth/authWrapper";
+import NotFound from "./NotFound";
+
 class App extends Component {
   render() {
     return (
@@ -47,6 +49,7 @@ class App extends Component {
                     path={["/dodaj-przepis", "/edytuj-przepis/:id"]}
                     component={UserIsAuthenticated(RecipeForm)}
                   />
+                  <Route component={NotFound}></Route>
                 </Switch>
               </Container>
             </>
